@@ -14,7 +14,7 @@ from .classes import TimestampError
 Helper method for write_compass_direction().
 Takes the wind direction value in degrees and maps it to the compass reading. Returns the compass string.
 """
-def wind_direction_mapper(wind_dir:int, null_value) -> str:
+def wind_direction_mapper(wind_dir:int, fill_empty) -> str:
     if not isinstance(wind_dir, int):
         raise TypeError(f"The 'wind_dir' parameter in wind_direction_mapper() should be of type <int>, passed: {type(wind_dir)}")
 
@@ -27,7 +27,7 @@ def wind_direction_mapper(wind_dir:int, null_value) -> str:
 
     for i in range(len(wind_val_lookup)-1):
         if wind_dir < 0 or wind_dir > 360:
-            return null_value
+            return fill_empty
         if wind_dir >= wind_val_lookup[i] and wind_dir <= wind_val_lookup[(i+1)]:
             return wind_dir_lookup[i]   
         
@@ -55,14 +55,14 @@ def is_wind_dir(measurement:str) -> bool:
 Takes the dictionary entry of the measurements at a timestamp obtained from API. Adds the compass rose classification 
 for all measurements containing wind direction or wind gust direction to a new updated dictionary and returns it.
 """
-def write_compass_direction(dictionary:dict, null_value) -> dict:
+def write_compass_direction(dictionary:dict, fill_empty) -> dict:
     if not isinstance(dictionary, dict):
         raise TypeError(f"The 'dictionary' parameter in write_compass_direction() should be of type <dict>, passed: {type(dictionary)}")
 
     updated_dict = dictionary
     for measurement in list(dictionary.keys()):
         if is_wind_dir(measurement):
-            compass_dir = {f'{measurement}_compass_dir': wind_direction_mapper(int(dictionary[measurement]), null_value)}
+            compass_dir = {f'{measurement}_compass_dir': wind_direction_mapper(int(dictionary[measurement]), fill_empty)}
             updated_dict.update(compass_dir)  
 
     return updated_dict
@@ -252,7 +252,7 @@ Accepts an array of headers, timestamps, and of dictionaries containing sensor m
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Accepts a string of the filepath at which to create the csv file and creates the csv there.
 """
-def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:str, include_test:bool, null_value): 
+def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:str, include_test:bool, fill_empty): 
     if not isinstance(headers, list):
         raise TypeError(f"The 'headers' parameter in csv_builder() should be of type <list>, passed: {type(headers)}")
     if not isinstance(time, np.ndarray):
@@ -272,7 +272,7 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
             measurements[i].update({'time':time[i]}) 
             if include_test and len(test) == len(time):
                 measurements[i].update({'test':test[i]})
-            measurement_dict = {header: measurements[i].get(header, null_value) for header in headers} # fill in null value for var's with no data
+            measurement_dict = {header: measurements[i].get(header, fill_empty) for header in headers} # fill in null value for var's with no data
             data.append(measurement_dict)
         
         df = pd.DataFrame(data, columns=headers)
@@ -349,7 +349,7 @@ TO DO: Increase efficiency. Currently steps through day-by-day, will take foreve
        Use Pandas for this purpose because it is undoubtedbly better
 """
 def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timestamp_window_start:dt_time, \
-                                timestamp_window_end:dt_time, portal_url:str, user_email:str, api_key:str, null_value) -> list:
+                                timestamp_window_end:dt_time, portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
     if not isinstance(iD, int):
         raise TypeError(f"The 'iD' parameter in time_window() should be of type <int>, passed: {type(iD)}")
     if not isinstance(timestamp_start, datetime):
@@ -388,7 +388,7 @@ def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timest
         for dictionary in data:
                 time.append(str(dictionary['time']))
                 total_num_measurements += len(dictionary['measurements'].keys())
-                to_append = write_compass_direction(dict(dictionary['measurements']), null_value)
+                to_append = write_compass_direction(dict(dictionary['measurements']), fill_empty)
                 measurements.append(to_append)
                 test.append(str(dictionary['test']))
 
@@ -409,7 +409,7 @@ def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timest
         for dictionary in data:
                 time.append(str(dictionary['time']))
                 total_num_measurements += len(dictionary['measurements'].keys())
-                to_append = write_compass_direction(dict(dictionary['measurements']), null_value)
+                to_append = write_compass_direction(dict(dictionary['measurements']), fill_empty)
                 measurements.append(to_append)
                 test.append(str(dictionary['test']))
 
@@ -476,7 +476,7 @@ to run the API request to CHORDS s.t. the number of data points requested is les
 lists of data necessary for main() to build csv's.
 """
 def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, timestamp_end:datetime, \
-                                                        portal_url:str, user_email:str, api_key:str, null_value) -> list:
+                                                        portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
     if not isinstance(error_message, str):
         raise TypeError(f"The 'error_message' parameter in reduce_datapoints() should be of type <str>, passed: {type(error_message)}")
     if not isinstance(iD, int):
@@ -529,7 +529,7 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
             for dictionary in data:
                 time.append(str(dictionary['time']))
                 total_num_measurements += len(dictionary['measurements'].keys())
-                to_append = write_compass_direction(dict(dictionary['measurements']), null_value)
+                to_append = write_compass_direction(dict(dictionary['measurements']), fill_empty)
                 measurements.append(to_append)
                 test.append(str(dictionary['test']))
             
