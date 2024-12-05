@@ -24,6 +24,7 @@ Install the required libraries with:
 ```bash
 pip install requests pandas numpy 
 ```
+You will also need an account on the CHORDS portal you are trying to download data from. Your account must have download privileges as well as an API key.
 
 ## Documentation
 In-depth documentation may be found at: https://docs.google.com/document/d/1qqs5X0vSslAEYBxlAh95oDgC1dG5xmBKVknz7wl1QxA/edit?usp=sharing
