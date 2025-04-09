@@ -7,27 +7,26 @@ A new CSV is created for each instrument.
 To use this script, fill out the user parameters before the main program.
 
 User Parameter Breakdown:
-    - fill_empty: [OPTIONAL] Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).
-    - include_test: [OPTIONAL] Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default).
+    - fill_empty: [OPTIONAL] Fill empty cells with any value. Empty string by default (creates smaller files).
+    - include_test: [OPTIONAL] Set to True to include boolean columns next to each data column which specify whether data collected was test data. False by default.
+    
     - portal_url: The url for the CHORDS online portal.
-    - portal_name: The name of the CHORDS portal, choose from this list (case sensitive): Barbados, Trinidad, 3D PAWS, 3D Calibration, FEWNSET, Kenya, Cayman Islands
-    - data_path: The absolute folder path specifying where the CSV files should be printed to locally.
+    - portal_name: The name of the CHORDS portal (3D PAWS, FEWSNET, Calibration, Barbados, Trinidad, Kenya, Argentina, IITM, Cayman Islands, Zimbabwe, Zambia, Dominican Republic)
+    - data_path: The absolute folder path specifying where the CSV files should be saved locally.
     - instrument_IDs: All the instruments to download data from. Use the Instrument Id from CHORDS portal.
     - user_email: The email login information in order to access the CHORDS online portal.
     - api_key: The API key which corresponds to the user's email address.
-    - start: The timestamp from which to start downloading data (MUST be in the following format: 'YYYY-MM-DD HH:MM:SS' e.g. '2023-11-25 00:00:00').
-    - end: The timestamp at which to end downloading data (MUST be in the following format: 'YYYY-MM-DD HH:MM:SS' e.g. '2023-11-31 23:59:59'). * see 'Usage'
+    - start: The timestamp from which to start downloading data.
+    - end: The timestamp at which to end downloading data. * see 'Usage'
+   
     - columns_desired: [OPTIONAL] Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.
-    - time_window_start: [OPTIONAL] Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.
-    - time_window_end: [OPTIONAL] Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.
+    - time_window_start: [OPTIONAL] Filter for specific time frame. (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.
+    - time_window_end: [OPTIONAL] Filter for specific time frame. (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.
 
 Usage:
-    - If you want your download to exactly match a data download from CHORDS, it may be helpful to download a single day's worth of data off the CHORDS website 
-      to see the hour at which a new day starts. Depending on the portal, CHORDS will start a new day at 0600Z, 0700Z, or 0800Z. 
-    - Because CHORDS days aren't from midnight-to-midnight, the 'end' parameter must reflect the extension into the next day. 
-      e.g. June 20th for FEWSNET goes from 2024-06-20 06:00:00 to 2024-06-21 05:45:59
-    - Timestamps must include seconds, which could affect the 'end' parameter you chose to use. CHORDS timestamps are frequently timestamped at 01, 02, or 03 seconds,
-      so it may not be good enough for the 'end' parameter to read 23:59:00, for example, you may have to specify 23:59:59 to include that last datapoint on the 59th minute.
+    - Timestamps include seconds, which could affect the 'end' parameter you chose to use. CHORDS timestamps are frequently timestamped at 01, 02, or 03 seconds,
+      so it may not be good enough for the 'end' parameter to read 23:59:00. For example, you may have to specify 23:59:59 to include that last datapoint on the 
+      59th minute.
     - To use the columns_desired parameter, which can be useful when downloading large datasets where you only care about a few columns, use the shortname listed on 
       CHORDS for the variable you want to include (e.g. mcp9808 -> mt1)
 
@@ -70,8 +69,8 @@ import resources
 
 # User Parameters ----------------------------------------------------------------------------------------------------------------
 
-fill_empty = '' # OPTIONAL
-include_test = False # OPTIONAL
+fill_empty = ''         # OPTIONAL
+include_test = False    # OPTIONAL
 
 portal_url = r"https://chords.url.com/"
 portal_name = "Portal Name"
@@ -81,12 +80,12 @@ instrument_IDs = [
 ]
 user_email = 'your@email.com'
 api_key = 'your-api-key' 
-start = 'YYYY-MM-DD HH:MM:SS' # CHORDS starts a new day at 0600, 0700 or 0800, depending on the portal
+start = 'YYYY-MM-DD HH:MM:SS' 
 end = 'YYYY-MM-DD HH:MM:SS'
 
-columns_desired = [] # it is important that the list be empty if no columns are to be specified!
-time_window_start = '' # it is important that these be empty strings if no time window is to be specified!
-time_window_end = '' 
+columns_desired = []    # OPTIONAL      
+time_window_start = ''  # OPTIONAL      
+time_window_end = ''    # OPTIONAL
 
 # MAIN PROGRAM ------------------------------------------------------------------------------------------------------------------------
 
@@ -115,11 +114,12 @@ def main():
 
     portal_lookup = [
         'barbados', 'trinidad', '3d paws', 'calibration', 'fewsnet', 'kenya', 
-        'zimbabwe', 'dominican republic', 'argentina', 'zambia', 'bangladesh'
+        'zimbabwe', 'dominican republic', 'argentina', 'zambia', 'iitm'
     ]
     if portal_name.lower() not in portal_lookup:
         raise ValueError(f"Please enter one of the following portal names (case insensitive):\n\t \
-                            Barbados, Trinidad, 3D PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, Bangladesh, Dominican Republic")
+                            Barbados, Trinidad, 3D PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia," \
+                                "Argentina, Dominican Republic, IITM")
     
     # processing loop ------------------------------------------------------------------------------------------------------------------
     for iD in instrument_IDs:

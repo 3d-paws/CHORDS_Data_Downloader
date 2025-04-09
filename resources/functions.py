@@ -115,8 +115,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     ]
     threeD_sort = [ # 3D PAWS
         't1', 't2', 't3', 'ht1', 'ht2', 'bt1', 'mt1', 'st1', 'htu21d_temp', 'mcp9808', 'bmp_temp', 'bme_temp', 
-        'bp1', 'sp1', 'msl1', 'bmp_slp', 'bme_slp', 'bmp_pressure', 'bme_pressure', 
-        'bmp_altitude',
+        'bp1', 'sp1', 'msl1', 'bmp_slp', 'bme_slp', 'bmp_pressure', 'bme_pressure', 'bmp_altitude',
         'ws', 'wind_speed', 'wd', 'wind_direction', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'hh1', 'hh2', 'rh1', 'bh1', 'sh1', 'htu21d_humidity', 'bme_humidity',
         'rain', 'rg', 'rgt', 'rgp', 'rgds',
@@ -129,7 +128,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bcs', 'bpc', 'cfr', 'bv', 'css', 'hth' # battery health
 
     ]
-    threeD_cal_sort = [ # 3D Calibration
+    threeD_cal_sort = [ # Calibration
         'htu21d_temp', 'bmp_temp', 'mcp9808', 'sht31d_temp', 'sht31d_humidity', 'htu21d_humidity', 'bmp_slp', 'bmp_pressure', 'rain', 'wind_speed', 
         'wind_direction', 'wind_direction_compass_dir', 'wg', 'wgd', 'wind_gust_direction_compass_dir', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'bpc'
     ]
@@ -157,10 +156,14 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bp1', 'bp2',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
+    i_sort = [ # IITM
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'rg', 'rgt', 'rgp', 'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
+        'hth', 'bpc', 'bcs', 'cfr', 'css'
+    ]
 
     portal_name_lower = portal_name.lower()
 
-    if portal_name_lower == "Barbaodos".lower():
+    if portal_name_lower == "Barbados".lower():
         column_map = {col: i for i, col in enumerate(b_sort)}
     elif portal_name_lower == "Trinidad".lower():
         column_map = {col: i for i, col in enumerate(t_sort)}
@@ -176,11 +179,14 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(a_sort)}
     elif portal_name_lower == "Zimbabwe".lower():
         column_map = {col: i for i, col in enumerate(z_sort)}
+    elif portal_name_lower == "IITM".lower():
+        column_map = {col: i for i, col in enumerate(i_sort)}
     else:
         print("Could not sort columns.")
-        sys.exit(1) 
+        return columns 
 
     sorted_columns = sorted(columns, key=lambda col: column_map.get(col, float('inf'))) # columns not found in sort appended at end
+    
     return list(sorted_columns) 
 
 """
