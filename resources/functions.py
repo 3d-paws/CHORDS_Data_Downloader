@@ -276,7 +276,8 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
             data.append(measurement_dict)
         
         df = pd.DataFrame(data, columns=headers)
-        df['date'] = pd.to_datetime(df['date'])
+        print(df.columns)
+        df['time'] = pd.to_datetime(df['time'])
         df.to_csv(filepath, index=False)
     else:
         raise TimestampError()
