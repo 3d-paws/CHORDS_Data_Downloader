@@ -81,12 +81,12 @@ instrument_IDs = [
 ]
 user_email = 'your@email.com'
 api_key = 'your-api-key' 
-start = 'YYYY-MM-DD HH:MM:SS'
+start = 'YYYY-MM-DD HH:MM:SS' # CHORDS starts a new day at 0600, 0700 or 0800, depending on the portal
 end = 'YYYY-MM-DD HH:MM:SS'
 
-columns_desired = [] # OPTIONAL     it is important that the list be empty if no columns are to be specified!
-time_window_start = '' # OPTIONAL   it is important that these be empty strings if no time window is to be specified!
-time_window_end = '' # OPTIONAL
+columns_desired = [] # it is important that the list be empty if no columns are to be specified!
+time_window_start = '' # it is important that these be empty strings if no time window is to be specified!
+time_window_end = '' 
 
 # MAIN PROGRAM ------------------------------------------------------------------------------------------------------------------------
 
