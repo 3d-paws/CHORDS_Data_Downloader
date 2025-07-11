@@ -130,7 +130,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     ]
     threeD_cal_sort = [ # Calibration
         'htu21d_temp', 'bmp_temp', 'mcp9808', 'sht31d_temp', 'sht31d_humidity', 'htu21d_humidity', 'bmp_slp', 'bmp_pressure', 'rain', 'wind_speed', 
-        'wind_direction', 'wind_direction_compass_dir', 'wg', 'wgd', 'wind_gust_direction_compass_dir', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'bpc'
+        'wind_direction', 'wind_direction_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'bpc'
     ]
     f_sort = [ # FEWSNET
         'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
