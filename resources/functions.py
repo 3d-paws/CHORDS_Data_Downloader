@@ -114,14 +114,15 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'sv1', 'si1', 'su1', 'bcs', 'bpc', 'cfr', 'css'
     ]
     threeD_sort = [ # 3D PAWS
-        't1', 't2', 't3', 'ht1', 'ht2', 'bt1', 'mt1', 'st1', 'htu21d_temp', 'mcp9808', 'bmp_temp', 'bme_temp', 
-        'bp1', 'sp1', 'msl1', 'bmp_slp', 'bme_slp', 'bmp_pressure', 'bme_pressure', 
+        't1', 't2', 't3', 't4', 't5', 't6', 't7','t8', 't9', 'ht1', 'ht2', 'bt1', 'mt1', 'st1', 'htu21d_temp', 'mcp9808', 'bmp_temp', 'bme_temp', 
+        'bp1', 'sp1', 'sp2', 'sp3', 'msl1', 'msl2', 'msl3', 'bmp_slp', 'bme_slp', 'bmp_pressure', 'bme_pressure', 
         'bmp_altitude',
         'ws', 'wind_speed', 'wd', 'wind_direction', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
-        'hh1', 'hh2', 'rh1', 'bh1', 'sh1', 'htu21d_humidity', 'bme_humidity',
+        'hh1', 'hh2', 'rh1', 'rh2', 'rh3', 'rh4', 'rh5', 'bh1', 'sh1', 'htu21d_humidity', 'bme_humidity',
         'rain', 'rg', 'rgt', 'rgp', 'rgds',
         'h1', 'wlo', 'wld', 'wlm', 'wlr', # water level sensors
         'sg', # snow depth sensor
+        'pm2_5', 'pm10', 'pm1s10', 'pm1e10', 'pm1s25', 'pm1e25', 'pm1s100', 'pm1e100' # air quality sensors
         'st1', 'st2', 'st3', 'sm1', 'sm2', 'sm3', # soil temp and soil moisture sensors
         'sv1', 'si1', 'su1', 'vis1', 'ir1', 'uv1', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'si1145_vis1', 'si1145_ir1', 'si1145_uv1',
             'si1145_vis2', 'si1145_ir2', 'si1145_uv2', 'si1145_vis3', 'si1145_ir3', 'si1145_uv3', 'si1145_vis4', 'si1145_ir4', 'si1145_uv4',
@@ -160,7 +161,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
 
     portal_name_lower = portal_name.lower()
 
-    if portal_name_lower == "Barbaodos".lower():
+    if portal_name_lower == "Barbados".lower():
         column_map = {col: i for i, col in enumerate(b_sort)}
     elif portal_name_lower == "Trinidad".lower():
         column_map = {col: i for i, col in enumerate(t_sort)}
@@ -177,7 +178,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     elif portal_name_lower == "Zimbabwe".lower():
         column_map = {col: i for i, col in enumerate(z_sort)}
     else:
-        print("Could not sort columns.")
+        print("Could not sort columns. Exiting.")
         sys.exit(1) 
 
     sorted_columns = sorted(columns, key=lambda col: column_map.get(col, float('inf'))) # columns not found in sort appended at end
