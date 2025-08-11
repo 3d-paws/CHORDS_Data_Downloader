@@ -68,7 +68,7 @@ from datetime import datetime, timedelta
 import sys
 import resources
 
-# User Parameters ----------------------------------------------------------------------------------------------------------------
+# User Parameters --------------------------------------------------------------------------------------------------------------------
 
 fill_empty = '' # OPTIONAL
 include_test = False # OPTIONAL
