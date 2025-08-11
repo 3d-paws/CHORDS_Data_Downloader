@@ -34,6 +34,7 @@ def wind_direction_mapper(wind_dir:int, fill_empty) -> str:
     print(f"Error locating wind direction: {wind_dir}")    
     sys.exit(1)
 
+
 """
 Helper method for get_columns(), build_headers(), and write_compass_direction().
 Takes a shortname representing a measurement and returns True if that shortname is for wind direction, False otherwise.
@@ -51,6 +52,7 @@ def is_wind_dir(measurement:str) -> bool:
 
     return False
 
+
 """
 Takes the dictionary entry of the measurements at a timestamp obtained from API. Adds the compass rose classification 
 for all measurements containing wind direction or wind gust direction to a new updated dictionary and returns it.
@@ -66,6 +68,7 @@ def write_compass_direction(dictionary:dict, fill_empty) -> dict:
             updated_dict.update(compass_dir)  
 
     return updated_dict
+
 
 """
 Helper function for build_headers() that checks if a header is in the known set of headers.
@@ -94,6 +97,7 @@ def headers_are_valid(columns_desired:list, columns_found:list, portal_name:str)
             return False
         
     return True
+
 
 """
 Helper function for get_columns that applies a kind of sort to the headers. Data from API stream comes into main() via
@@ -184,6 +188,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     sorted_columns = sorted(columns, key=lambda col: column_map.get(col, float('inf'))) # columns not found in sort appended at end
     return list(sorted_columns) 
 
+
 """
 Takes a list of dictionaries and returns a list of the set of all variables to be used as columns in the csv.
 The exception is when include_test is set to True -- it will append a column 'test' next to each variable indicating 
@@ -209,6 +214,7 @@ def get_columns(dictionary_list:list, include_test:bool, portal_name:str) -> lis
                     columns.append('test')
 
     return columns
+
 
 """
 Creates a list of all the header names to be used in the csv requested by user and returns it.
@@ -247,6 +253,7 @@ def build_headers(measurements:list, columns_desired:list, include_test:bool, po
             sys.exit(1)
 
     return headers
+
 
 """
 Accepts an array of headers, timestamps, and of dictionaries containing sensor measurements. 
@@ -298,6 +305,7 @@ def has_excess_datapoints(dictionary:dict) -> bool:
 
     return False
 
+
 """
 Accepts np arrays for measurements, time, and test which were created from the data stream from CHORDS, and checks whether 
 the transfer of data from the stream to the data structs was a success.
@@ -343,6 +351,7 @@ def has_errors(all_fields:dict) -> bool:
             return True
                 
     return False
+
 
 """
 Handles specific time window requested by user. Stores only data that falls into the time window specified and returns data from API pull as a list of lists.
@@ -461,6 +470,7 @@ def get_timestamps(start_time:datetime, end_time:datetime, divisions:int) -> lis
 
     return new_timestamps
 
+
 """
 Accepts a timestamp string from the CHORDS API and parses out the timestamp. Returns a datetime object of the parameter.
     e.g.  '2023-12-17T18:45:56Z'
@@ -493,7 +503,6 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
         raise TypeError(f"The 'user_email' parameter in reduce_datapoints() should be of type <str>, passed: {type(user_email)}")
     if not isinstance(api_key, str):
         raise TypeError(f"The 'api_key' parameter in reduce_datapoints() should be of type <str>, passed: {type(api_key)}")
-
 
     print("\t Beginning reduction calculation.")
 
@@ -539,4 +548,5 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
             keep_going = False    
         
     print("\t Finished reduction calculation.")
+    
     return [time, measurements, test, total_num_measurements]
