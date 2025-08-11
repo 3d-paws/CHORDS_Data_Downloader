@@ -73,16 +73,16 @@ import resources
 fill_empty = '' # OPTIONAL
 include_test = False # OPTIONAL
 
-portal_url = r"https://chords.url.com/"
-portal_name = "Portal Name"
-data_path = r"C://path//to//local//storage//" 
+portal_url = r"https://3d.chordsrt.com/"
+portal_name = "3D PAWS"
+data_path = r"/Users/rzieber/Downloads/" 
 instrument_IDs = [
-    1,2,3
+    2
 ]
-user_email = 'your@email.com'
-api_key = 'your-api-key' 
-start = 'YYYY-MM-DD HH:MM:SS' # CHORDS starts a new day at 0600, 0700 or 0800, depending on the portal
-end = 'YYYY-MM-DD HH:MM:SS'
+user_email = 'rzieber@ucar.edu'
+api_key = 'pc7HQpcDipWsetaxmJ5t' 
+start = '2024-12-06 07:00:00' # CHORDS starts a new day at 0600, 0700 or 0800, depending on the portal
+end = '2025-05-12 17:27:59'
 
 columns_desired = [] # it is important that the list be empty if no columns are to be specified!
 time_window_start = '' # it is important that these be empty strings if no time window is to be specified!
