@@ -114,12 +114,12 @@ def main():
             raise ValueError(f"Both the 'time_window_start' and 'time_window_end' variables must be populated to specify a collection timeframe.")
 
     portal_lookup = [
-        'barbados', 'trinidad', '3d paws', 'calibration', 'fewsnet', 'kenya', 
+        'barbados', 'trinidad', '3d-paws', 'calibration', 'fewsnet', 'kenya', 
         'zimbabwe', 'dominican republic', 'argentina', 'zambia', 'bangladesh'
     ]
     if portal_name.lower() not in portal_lookup:
         raise ValueError(f"Please enter one of the following portal names (case insensitive):\n\t \
-                            Barbados, Trinidad, 3D PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, Bangladesh, Dominican Republic")
+                            Barbados, Trinidad, 3D-PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, Bangladesh, Dominican Republic")
     
     # processing loop ------------------------------------------------------------------------------------------------------------------
     for iD in instrument_IDs:

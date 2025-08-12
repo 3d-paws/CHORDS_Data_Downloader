@@ -169,7 +169,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(b_sort)}
     elif portal_name_lower == "Trinidad".lower():
         column_map = {col: i for i, col in enumerate(t_sort)}
-    elif portal_name_lower == "3D PAWS".lower():
+    elif portal_name_lower == "3D-PAWS".lower():
         column_map = {col: i for i, col in enumerate(threeD_sort)}
     elif portal_name_lower == "Calibration".lower():
         column_map = {col: i for i, col in enumerate(threeD_cal_sort)}
