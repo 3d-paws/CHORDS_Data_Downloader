@@ -70,22 +70,22 @@ import resources
 
 # User Parameters --------------------------------------------------------------------------------------------------------------------
 
-fill_empty = '' # OPTIONAL
-include_test = False # OPTIONAL
+fill_empty = ''                 # OPTIONAL
+include_test = False            # OPTIONAL
 
-portal_url = r"https://chords.url.com/"
-portal_name = "Portal Name"
-data_path = r"C://path//to//local//storage//" 
+portal_url = r"https://3d-dr.icdp.ucar.edu/"
+portal_name = "Dominican Republic"
+data_path = r"/Users/rzieber/Downloads/" 
 instrument_IDs = [
-    1,2,3
+    1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
 ]
-user_email = 'your@email.com'
-api_key = 'your-api-key' 
-start = 'YYYY-MM-DD HH:MM:SS' # CHORDS starts a new day at 0600, 0700 or 0800, depending on the portal
-end = 'YYYY-MM-DD HH:MM:SS'
+user_email = "rzieber@ucar.edu"
+api_key = 'Ln6quExWwxsqLnwa1squ' 
+start = "2025-10-20 00:00:00" 
+end = "2025-10-21 00:00:00"
 
-columns_desired = [] # it is important that the list be empty if no columns are to be specified!
-time_window_start = '' # it is important that these be empty strings if no time window is to be specified!
+columns_desired = []            # OPTIONAL it is important that the list be empty if no columns are to be specified!
+time_window_start = ''          # OPTIONAL it is important that these be empty strings if no time window is to be specified!
 time_window_end = '' 
 
 # MAIN PROGRAM ------------------------------------------------------------------------------------------------------------------------
