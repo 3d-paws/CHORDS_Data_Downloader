@@ -147,8 +147,13 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     d_sort = [ # Dominican Republic
-        'ht1', 'bt1', 'mt1', 'hh1', 'bmp_slp', 'bp1', 'rg', 'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
-        'sv1', 'si1', 'su1', 'hth', 'bpc'
+        'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bmp_slp', 'bp1', 
+        'rg', 'rgt', 'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
+        'wl', 'wlo', 'wld', 'wlm', 'wlr',
+        'tmsms1', 'tmsms2', 'tmsms3', 'tmsms4', 'tmsms5', 'tmsmt1', 'tmsmt2', 
+        'sv1', 'si1', 'su1', 'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
+
     ]
     a_sort = [ # Argentina
         'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'rg', 'rgs', 'rgt', 'rgp', 'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
@@ -336,9 +341,16 @@ message to the screen for troubleshooting. Returns True if error is found, False
 ** when the API returns 'errors' key, the information is stored in a list  **
 ** when the API returns 'error' key, the information is stored in a string **
 """
+# def has_errors(all_fields:dict, portal_name:str, iD:int, data_path:str) -> bool:
 def has_errors(all_fields:dict) -> bool:
     if not isinstance(all_fields, dict):
         raise TypeError(f"The 'all_fields' parameter in has_errors() should be of type <dict>, passed: {type(all_fields)}")
+    # if not isinstance(portal_name, str):
+    #     raise TypeError(f"The 'portal_name' parameter in has_errors() should be of type <str>, passed: {type(portal_name)}")
+    # if not isinstance(iD, int):
+    #     raise TypeError(f"The 'iD' parameter in has_errors() should be of type <int>, passed: {type(iD)}")
+    # if not isinstance(data_path, str):
+    #     raise TypeError(f"The 'data_path' parameter in has_errors() should be of type <str>, passed: {type(data_path)}")
 
     for key in all_fields:
         if key == 'errors' and all_fields['errors'][0] == 'Access Denied, user authentication required.': 
@@ -347,8 +359,12 @@ def has_errors(all_fields:dict) -> bool:
             return True
         if key == 'error' and all_fields['error'] == 'Internal Server Error':
             print(all_fields[key])
-            print("Check to make sure the instrument ID's are valid. Refer to the CHORDS Portal.")
+            print("Check to make sure the instrument ID's are valid. Refer to the 'Instruments' tab on the CHORDS portal.")
             return True
+            # txt = f"\\{portal_name}_instrumentID_{iD}_[WARNING].txt"
+            # file_path = data_path + txt
+            # with open(file_path, 'w') as file:
+            #     file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
                 
     return False
 
