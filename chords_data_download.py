@@ -141,8 +141,9 @@ def main():
             url = f"{portal_url}/api/v1/data/{iD}?start={start}&end={end}&email={user_email}&api_key={api_key}"
             response = requests.get(url=url)
             all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
-            if resources.has_errors(all_fields):
-                sys.exit(1)
+            if resources.has_errors(all_fields, portal_name, iD, data_path):
+                continue
+                #sys.exit(1)
             
             if resources.has_excess_datapoints(all_fields): # reduce timeframe in API call
                 print("\t Large data request -- reducing.")
@@ -169,7 +170,7 @@ def main():
         else: # if a time window was specified by user
             print(f"\t\t Time window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
             window_data = resources.time_window(int(iD), timestamp_start, timestamp_end, timestamp_window_start, timestamp_window_end, \
-                                        portal_url, user_email, api_key, fill_empty) # a list [time, measurements, test, total_num_measurements]
+                                        portal_url, user_email, api_key, portal_name, data_path, fill_empty) # a list [time, measurements, test, total_num_measurements]
             time = window_data[0]
             measurements = window_data[1]
             test = window_data[2]
@@ -181,8 +182,6 @@ def main():
         test = np.array(test)
         
         if resources.struct_has_data(measurements, time, test): 
-            #file_name = 
-            #file_path = data_path + csv
             file_path = data_path / f"{portal_name}_Instrument-{iD}_{timestamp_start.date()}_{timestamp_end.date()}.csv"
             resources.csv_builder(headers, time, measurements, test, file_path, include_test, fill_empty)
             print(f"\t Finished writing to file.\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -190,9 +189,7 @@ def main():
         else:
             print("\t ========================= WARNING =========================")
             print(f"\t No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n")
-            #file_name = 
-            #file_path = data_path + txt
-            file_path = data_path / f"{portal_name}_instrumentID_{iD}_[WARNING].txt"
+            file_path = data_path / f"{portal_name}_Instrument-{iD}_[WARNING].txt"
             with open(file_path, 'w') as file:
                 file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
 
