@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import datetime, timedelta, time as dt_time
 import sys
 import math
+from pathlib import Path
 from .classes import TimestampError
 
 # Functions -------------------------------------------------------------------------------------------------------------------------
@@ -265,7 +266,8 @@ Accepts an array of headers, timestamps, and of dictionaries containing sensor m
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Accepts a string of the filepath at which to create the csv file and creates the csv there.
 """
-def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:str, include_test:bool, fill_empty): 
+# def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:str, include_test:bool, fill_empty): 
+def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:Path, include_test:bool, fill_empty):     
     if not isinstance(headers, list):
         raise TypeError(f"The 'headers' parameter in csv_builder() should be of type <list>, passed: {type(headers)}")
     if not isinstance(time, np.ndarray):
@@ -274,8 +276,8 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
         raise TypeError(f"The 'measurements' parameter in csv_builder() should be of type <ndarray>, passed: {type(measurements)}")
     if not isinstance(test, np.ndarray):
         raise TypeError(f"The 'test' parameter in csv_builder() should be of type <ndarray>, passed: {type(test)}")
-    if not isinstance(filepath, str):
-        raise TypeError(f"The 'filepath' parameter in csv_builder() should be of type <str>, passed: {type(filepath)}")
+    if not isinstance(filepath, Path):
+        raise TypeError(f"The 'filepath' parameter in csv_builder() should be of type <Path>, passed: {type(filepath)}")
     if not isinstance(include_test, bool):
         raise TypeError(f"The 'include_test' parameter in csv_builder() should be of type <bool>, passed: {type(include_test)}")
 

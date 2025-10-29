@@ -67,22 +67,24 @@ import numpy as np
 from datetime import datetime, timedelta
 import sys
 import resources
+from pathlib import Path
 
 # User Parameters --------------------------------------------------------------------------------------------------------------------
 
 fill_empty = ''                 # OPTIONAL
 include_test = False            # OPTIONAL
 
-portal_url = r"https://chords.url.com/"
-portal_name = "Portal Name"
-data_path = r"C://path//to//local//storage//" 
+portal_url = r"https://3d.chordsrt.com/"
+portal_name = "3D-PAWS"
+# data_path = r"C://path//to//local//storage//" 
+data_path = Path("/Users/rzieber/Downloads") 
 instrument_IDs = [
     1,2,3
 ]
-user_email = 'your@email.com'
-api_key = 'your-api-key' 
-start = 'YYYY-MM-DD HH:MM:SS' 
-end = 'YYYY-MM-DD HH:MM:SS'
+user_email = 'rzieber@ucar.edu'
+api_key = 'pc7HQpcDipWsetaxmJ5t' 
+start = '2025-10-29 00:00:00' 
+end = '2025-10-29 23:59:59'
 
 columns_desired = []            # OPTIONAL it is important that the list be empty if no columns are to be specified!
 time_window_start = ''          # OPTIONAL it is important that these be empty strings if no time window is to be specified!
@@ -179,16 +181,18 @@ def main():
         test = np.array(test)
         
         if resources.struct_has_data(measurements, time, test): 
-            csv = f"\\{portal_name}_ID{iD}_{timestamp_start.date()}_{timestamp_end.date()}.csv"
-            file_path = data_path + csv
+            #file_name = 
+            #file_path = data_path + csv
+            file_path = data_path / f"{portal_name}_Instrument-{iD}_{timestamp_start.date()}_{timestamp_end.date()}.csv"
             resources.csv_builder(headers, time, measurements, test, file_path, include_test, fill_empty)
             print(f"\t Finished writing to file.\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             print(f"\t Total number of measurements: {total_num_measurements}")
         else:
             print("\t ========================= WARNING =========================")
             print(f"\t No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n")
-            txt = f"\\{portal_name}_instrumentID_{iD}_[WARNING].txt"
-            file_path = data_path + txt
+            #file_name = 
+            #file_path = data_path + txt
+            file_path = data_path / f"{portal_name}_instrumentID_{iD}_[WARNING].txt"
             with open(file_path, 'w') as file:
                 file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
 
