@@ -272,7 +272,6 @@ Accepts an array of headers, timestamps, and of dictionaries containing sensor m
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Accepts a string of the filepath at which to create the csv file and creates the csv there.
 """
-# def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:str, include_test:bool, fill_empty): 
 def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:Path, include_test:bool, fill_empty):     
     if not isinstance(headers, list):
         raise TypeError(f"The 'headers' parameter in csv_builder() should be of type <list>, passed: {type(headers)}")
@@ -309,7 +308,7 @@ Returns True if excess datapoints, False otherwise.
 """
 def has_excess_datapoints(dictionary:dict) -> bool:
     if not isinstance(dictionary, dict):
-        raise TypeError(f"The 'dictionary' parameter in stream_has_data() should be of type <dict>, passed: {type(dictionary)}")
+        raise TypeError(f"The 'dictionary' parameter in has_excess_datapoints() should be of type <dict>, passed: {type(dictionary)}")
 
     for key in dictionary: 
         if key == "errors":
@@ -332,6 +331,7 @@ def struct_has_data(measurements:np.ndarray, time:np.ndarray, test:np.ndarray) -
     
     flag = True
     if len(measurements) == 0:
+        print("\t\t No timestamps found.\n")
         flag = False
     if len(time) == 0:
         print("\t\t No timestamps found.\n")
@@ -344,34 +344,35 @@ def struct_has_data(measurements:np.ndarray, time:np.ndarray, test:np.ndarray) -
 
 """
 Accepts the resulting data stream of API request, and checks if any of the keys are a known error. Prints are more useful error
-message to the screen for troubleshooting. Returns True if error is found, False otherwise.
+message to the screen for troubleshooting. Returns True if error is found, False otherwise. 
 ** when the API returns 'errors' key, the information is stored in a list  **
 ** when the API returns 'error' key, the information is stored in a string **
 """
-# def has_errors(all_fields:dict, portal_name:str, iD:int, data_path:str) -> bool:
-def has_errors(all_fields:dict) -> bool:
+def has_errors(all_fields:dict, portal_name:str, iD:int, data_path:Path) -> bool:
+# def has_errors(all_fields:dict) -> bool:
     if not isinstance(all_fields, dict):
         raise TypeError(f"The 'all_fields' parameter in has_errors() should be of type <dict>, passed: {type(all_fields)}")
-    # if not isinstance(portal_name, str):
-    #     raise TypeError(f"The 'portal_name' parameter in has_errors() should be of type <str>, passed: {type(portal_name)}")
-    # if not isinstance(iD, int):
-    #     raise TypeError(f"The 'iD' parameter in has_errors() should be of type <int>, passed: {type(iD)}")
-    # if not isinstance(data_path, str):
-    #     raise TypeError(f"The 'data_path' parameter in has_errors() should be of type <str>, passed: {type(data_path)}")
+    if not isinstance(portal_name, str):
+        raise TypeError(f"The 'portal_name' parameter in has_errors() should be of type <str>, passed: {type(portal_name)}")
+    if not isinstance(iD, int):
+        raise TypeError(f"The 'iD' parameter in has_errors() should be of type <int>, passed: {type(iD)}")
+    if not isinstance(data_path, Path):
+        raise TypeError(f"The 'data_path' parameter in has_errors() should be of type <Path>, passed: {type(data_path)}")
 
     for key in all_fields:
         if key == 'errors' and all_fields['errors'][0] == 'Access Denied, user authentication required.': 
             print(all_fields[key][0])
             print("Check url, email address, and api key.")
-            return True
+            sys.exit(1)
+            #return True
         if key == 'error' and all_fields['error'] == 'Internal Server Error':
-            print(all_fields[key])
-            print("Check to make sure the instrument ID's are valid. Refer to the 'Instruments' tab on the CHORDS portal.")
+            # print(all_fields[key])
+            # print("Check to make sure the instrument ID's are valid. Refer to the 'Instruments' tab on the CHORDS portal.")
+            # return True
+            file_path = data_path / f"{portal_name}_Instrument-{iD}_[WARNING].txt"
+            with open(file_path, 'w') as file:
+                file.write(f"No data was found for instrument ID {iD}.\nCheck the CHORDS portal to verify.")
             return True
-            # txt = f"\\{portal_name}_instrumentID_{iD}_[WARNING].txt"
-            # file_path = data_path + txt
-            # with open(file_path, 'w') as file:
-            #     file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
                 
     return False
 
@@ -383,7 +384,8 @@ TO DO: Increase efficiency. Currently steps through day-by-day, will take foreve
        Use Pandas for this purpose because it is undoubtedbly better
 """
 def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timestamp_window_start:dt_time, \
-                                timestamp_window_end:dt_time, portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
+                                timestamp_window_end:dt_time, portal_url:str, user_email:str, api_key:str, portal_name:str, \
+                                    data_path:Path, fill_empty) -> list:
     if not isinstance(iD, int):
         raise TypeError(f"The 'iD' parameter in time_window() should be of type <int>, passed: {type(iD)}")
     if not isinstance(timestamp_start, datetime):
@@ -400,6 +402,10 @@ def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timest
         raise TypeError(f"The 'user_email' parameter in time_window() should be of type <str>, passed: {type(user_email)}")
     if not isinstance(api_key, str):
         raise TypeError(f"The 'api_key' parameter in time_window() should be of type <str>, passed: {type(api_key)}")
+    if not isinstance(portal_name, str):
+        raise TypeError(f"The 'portal_name' parameter in time_window() should be of type <str>, passed: {type(portal_name)}")
+    if not isinstance(data_path, Path):
+        raise TypeError(f"The 'data_path' parameter in time_window() should be of type <Path>, passed: {type(data_path)}")
 
     time = []
     measurements = []
@@ -415,8 +421,9 @@ def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timest
         response = requests.get(url=url)
         all_fields = loads(dumps(response.json()))
 
-        if has_errors(all_fields):
-                sys.exit(1)
+        if has_errors(all_fields, portal_name, iD, data_path): 
+            # sys.exit(1)
+            return
 
         data = all_fields['features'][0]['properties']['data']
         for dictionary in data:
@@ -436,8 +443,9 @@ def time_window(iD:int, timestamp_start:datetime, timestamp_end:datetime, timest
         response = requests.get(url=url)
         all_fields = loads(dumps(response.json()))
 
-        if has_errors(all_fields):
-            sys.exit(1)
+        if has_errors(all_fields, portal_name, iD, data_path):
+            return
+            # sys.exit(1)
 
         data = all_fields['features'][0]['properties']['data']
         for dictionary in data:
