@@ -168,6 +168,9 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bp1', 'bp2',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
+    fj_sort = [ # Fiji
+        ...
+    ]
 
     portal_name_lower = portal_name.lower()
 
@@ -187,6 +190,9 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(a_sort)}
     elif portal_name_lower == "Zimbabwe".lower():
         column_map = {col: i for i, col in enumerate(z_sort)}
+    elif portal_name_lower == "Fiji".lower():
+        ...
+        # column_map = {col: i for i, col in enumerate(fj_sort)}
     else:
         print("Could not sort columns. Exiting.")
         sys.exit(1) 
@@ -291,7 +297,6 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
             data.append(measurement_dict)
         
         df = pd.DataFrame(data, columns=headers)
-        #print(df.columns)
         df['time'] = pd.to_datetime(df['time'])
         df.to_csv(filepath, index=False)
     else:
