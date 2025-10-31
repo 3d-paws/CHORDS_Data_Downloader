@@ -1,7 +1,7 @@
 # CHORDS Data Downloader
 
-This Python script automates the process of downloading data from the CHORDS database using its API and saves the data as a CSV. The script is configurable for different CHORDS portals and user-defined parameters.<br>
-chords_local_download.py -- creates csv's on local hard drive<br><br>
+This Python script automates the process of downloading data from the CHORDS database using its API and saves the data as a CSV. The script is configurable for different CHORDS portals and user-defined parameters.<br><br>
+chords_local_download.py -- creates csv's on local hard drive<br>
 chords_dataframes.py -- configured for use as importable module for external processes, returns a list of dataframes 
 
 ## Features
