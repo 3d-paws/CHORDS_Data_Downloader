@@ -76,7 +76,7 @@ include_test = False            # OPTIONAL
 
 portal_url = r"https://chords.url.com/"
 portal_name = "Portal Name"
-data_path = r"C://path//to//local//storage//" 
+data_path = Path("C://path//to//local//storage//") 
 instrument_IDs = [
     1,2,3
 ]
