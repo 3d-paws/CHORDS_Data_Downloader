@@ -19,13 +19,12 @@ To run this script, you’ll need:
 - The following Python libraries:
   - `requests` for making API requests
   - `pandas` for CSV creation
-  - `json` for API data retrieval
   - `numpy` 
 
 Install the required libraries with:
 
 ```bash
-pip install requests pandas numpy 
+pip install -r requirements.txt
 ```
 You will also need an account on the CHORDS portal you are trying to download data from. Your account must have download privileges as well as an API key.
 
