@@ -116,11 +116,13 @@ def main():
 
     portal_lookup = [
         'barbados', 'trinidad', '3d-paws', 'calibration', 'fewsnet', 'kenya', 
-        'zimbabwe', 'dominican republic', 'argentina', 'zambia', 'iitm', 'fiji'
+        'zimbabwe', 'dominican republic', 'argentina', 'zambia', 'iitm', 'fiji',
+        'malawi', 'bahamas', 'somalia'
     ]
     if portal_name.lower() not in portal_lookup:
         raise ValueError(f"Please enter one of the following portal names (case insensitive):\n\t \
-                            Barbados, Trinidad, 3D-PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, IITM, Dominican Republic, Fiji")
+                            Barbados, Trinidad, 3D-PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, IITM, Dominican Republic, Fiji,"\
+                            "Malawi, Bahamas, Somalia")
     
     # processing loop ------------------------------------------------------------------------------------------------------------------
     for iD in instrument_IDs:
