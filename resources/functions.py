@@ -133,7 +133,6 @@ def sort_columns(columns:list, portal_name:str) -> list:
             'si1145_vis2', 'si1145_ir2', 'si1145_uv2', 'si1145_vis3', 'si1145_ir3', 'si1145_uv3', 'si1145_vis4', 'si1145_ir4', 'si1145_uv4',
             'solar1', 'solar2', 'lx', # irradiance sensors
         'bcs', 'bpc', 'cfr', 'bv', 'css', 'hth' # battery health
-
     ]
     threeD_cal_sort = [ # 3D Calibration
         'htu21d_temp', 'bmp_temp', 'mcp9808', 'sht31d_temp', 'sht31d_humidity', 'htu21d_humidity', 'bmp_slp', 'bmp_pressure', 'rain', 'wind_speed', 
@@ -150,7 +149,13 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
     ]
     m_sort = [ # Malawi
-        ...
+        'rg', 'rg1', 'rg2', 'rgt', 'rgt1', 'rgt2', 'rgp', 'rgp1', 'rgp2',
+        'hi',  'wbt', 'wbgt',
+        'bt1', 'st1', 'mt1',
+        'bh1', 'sh1',
+        'bp1', 'bp2', 'mslp',
+        'ws', 'wd', 'wg', 'wgd',
+        'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     bh_sort = [ # Bahamas
         ...
@@ -165,7 +170,6 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'wl', 'wlo', 'wld', 'wlm', 'wlr', 'sg',
         'tmsms1', 'tmsms2', 'tmsms3', 'tmsms4', 'tmsms5', 'tmsmt1', 'tmsmt2', 
         'sv1', 'si1', 'su1', 'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
-
     ]
     a_sort = [ # Argentina
         'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp', 'rg', 'rgs', 'rgt', 'rgp', 'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
@@ -181,7 +185,11 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     fj_sort = [ # Fiji
-        ...
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
+        'ws', 'wd', 'wg', 'wgd',
+        'rg', 'rgt, 'rgp,
+        'hi', 'wbt', 'wbgt',
+        'hth', 'css', 'bcs', 'bpc'
     ]
 
     portal_name_lower = portal_name.lower()
