@@ -30,6 +30,7 @@ You will also need an account on the CHORDS portal you are trying to download da
 ## Utilization
 To download data via the API, determine which method suits your application. See the discussion above to compare `chords_local_download.py` and `chords_dataframes.py`.
 Next, simply imput your user parameters at the top of the script and run the program in your IDE.<br>
+NOTE: Column names are the sensor shortnames. See the associated CHORDS portal for the sensor full name.<br>
 <br>
 Required parameters:
 - `portal_url` - The url for the CHORDS online portal.
