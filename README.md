@@ -9,8 +9,23 @@ There are two primary data extraction options:<br><br>
 - Retrieves data from the CHORDS database
 - Supports customizable API parameters
   - CHORDS portal, instrument ID's, and data period in addition to other optional parameters
-- Saves the downloaded data as a CSV, with variable (sensor) shortnames used as column headers
+- Saves the downloaded data as a CSV or as a Pandas dataframe, with variable (sensor) shortnames used as column headers (see associated CHORDS portal for full sensor name)
 - Includes API error handling, most noteably an exponential backoff method to reduce excess datapoints
+
+## Requirements
+To run this script, you’ll need:
+- Python 3.6 or higher
+- The following Python libraries:
+  - `requests` for making API requests
+  - `pandas` for CSV creation
+  - `numpy` 
+
+Install the required libraries with:
+
+```bash
+pip install -r requirements.txt
+```
+You will also need an account on the CHORDS portal you are trying to download data from. Your account must have download privileges as well as an API key.
 
 ## Utilization
 To download data via the API, determine which method suits your application. See the discussion above to compare `chords_local_download.py` and `chords_dataframes.py`.
@@ -48,21 +63,6 @@ Optional parameters:
 - `Bahamas`
 - `Malawi`
 - `Somalia`
-
-## Requirements
-To run this script, you’ll need:
-- Python 3.6 or higher
-- The following Python libraries:
-  - `requests` for making API requests
-  - `pandas` for CSV creation
-  - `numpy` 
-
-Install the required libraries with:
-
-```bash
-pip install -r requirements.txt
-```
-You will also need an account on the CHORDS portal you are trying to download data from. Your account must have download privileges as well as an API key.
 
 ## Documentation
 In-depth documentation may be found at: https://docs.google.com/document/d/1qqs5X0vSslAEYBxlAh95oDgC1dG5xmBKVknz7wl1QxA/edit?usp=sharing
