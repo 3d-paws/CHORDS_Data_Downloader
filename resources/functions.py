@@ -120,7 +120,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     ]
     threeD_sort = [ # 3D PAWS
         't1', 't2', 't3', 't4', 't5', 't6', 't7','t8', 't9', 'ht1', 'ht2', 'bt1', 'mt1', 'st1', 'htu21d_temp', 'mcp9808', 'bmp_temp', 'bme_temp', 
-        'bp1', 'sp1', 'sp2', 'sp3', 'msl1', 'msl2', 'msl3', 'bmp_slp', 'bme_slp', 'bmp_pressure', 'bme_pressure', 
+        'bp1', 'sp1', 'sp2', 'sp3', 'msl1', 'msl2', 'msl3', 'bmp_slp', 'bme_slp', 'bmp_pressure', 'bme_pressure', 'mslp',
         'bmp_altitude',
         'ws', 'wind_speed', 'wd', 'wind_direction', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'hh1', 'hh2', 'rh1', 'rh2', 'rh3', 'rh4', 'rh5', 'bh1', 'sh1', 'htu21d_humidity', 'bme_humidity',
@@ -144,7 +144,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hi',  'wbt', 'wbgt',
         'bt1', 'bt2', 'ht1', 'ht2', 'st1', 'mt1',
         'bh1', 'bh2', 'hh1', 'hh2', 'sh1',
-        'bp1', 'bp2',
+        'bp1', 'bp2', 'mslp',
         'sv1', 'si1', 'su1',
         'ws', 'wd', 'wg', 'wgd',
         'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
@@ -159,7 +159,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         ...
     ]
     d_sort = [ # Dominican Republic
-        'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bmp_slp', 'bp1', 
+        'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bp1', 'mslp', 'bmp_slp', 
         'rg', 'rgt', 'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
         'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
         'wl', 'wlo', 'wld', 'wlm', 'wlr', 'sg',
@@ -168,7 +168,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
 
     ]
     a_sort = [ # Argentina
-        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'rg', 'rgs', 'rgt', 'rgp', 'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp', 'rg', 'rgs', 'rgt', 'rgp', 'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
         'sv1', 'si1', 'su1', 'hth', 'bpc', 'bcs', 'cfr', 'css'
     ]
     z_sort = [ # Zimbabwe
@@ -176,7 +176,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hi',  'wbt', 'wbgt',
         'bt1', 'st1', 'mt1',
         'bh1', 'sh1',
-        'bp1', 'bp2',
+        'bp1', 'bp2', 'mslp',
         'ws', 'wd', 'wg', 'wgd',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
@@ -215,8 +215,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         ...
         # column_map = {col: i for i, col in enumerate(sm_sort)}
     else:
-        print("Could not sort columns. Exiting.")
-        sys.exit(1) 
+        print("Portal provided does not have a specified sort order.")
 
     sorted_columns = sorted(columns, key=lambda col: column_map.get(col, float('inf'))) # columns not found in sort appended at end
     return list(sorted_columns) 
