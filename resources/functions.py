@@ -147,6 +147,15 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bp1', 'bp2',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
+    m_sort = [ # Malawi
+        ...
+    ]
+    bh_sort = [ # Bahamas
+        ...
+    ]
+    sm_sort = [ # Somalia 
+        ...
+    ]
     d_sort = [ # Dominican Republic
         'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bmp_slp', 'bp1', 
         'rg', 'rgt', 'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
@@ -193,6 +202,15 @@ def sort_columns(columns:list, portal_name:str) -> list:
     elif portal_name_lower == "Fiji".lower():
         ...
         # column_map = {col: i for i, col in enumerate(fj_sort)}
+    elif portal_name_lower == "Malawi".lower():
+        ...
+        # column_map = {col: i for i, col in enumerate(m_sort)}
+    elif portal_name_lower == "Bahamas".lower():
+        ...
+        # column_map = {col: i for i, col in enumerate(bh_sort)}
+    elif portal_name_lower == "Somalia".lower():
+        ...
+        # column_map = {col: i for i, col in enumerate(sm_sort)}
     else:
         print("Could not sort columns. Exiting.")
         sys.exit(1) 
