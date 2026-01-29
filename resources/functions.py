@@ -158,10 +158,10 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     bh_sort = [ # Bahamas
-        ...
+        ... # don't forget to uncomment the map down below!
     ]
     sm_sort = [ # Somalia 
-        ...
+        ... # don't forget to uncomment the map down below!
     ]
     d_sort = [ # Dominican Republic
         'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bp1', 'mslp', 'bmp_slp', 
@@ -211,11 +211,9 @@ def sort_columns(columns:list, portal_name:str) -> list:
     elif portal_name_lower == "Zimbabwe".lower():
         column_map = {col: i for i, col in enumerate(z_sort)}
     elif portal_name_lower == "Fiji".lower():
-        ...
-        # column_map = {col: i for i, col in enumerate(fj_sort)}
+        column_map = {col: i for i, col in enumerate(fj_sort)}
     elif portal_name_lower == "Malawi".lower():
-        ...
-        # column_map = {col: i for i, col in enumerate(m_sort)}
+        column_map = {col: i for i, col in enumerate(m_sort)}
     elif portal_name_lower == "Bahamas".lower():
         ...
         # column_map = {col: i for i, col in enumerate(bh_sort)}
