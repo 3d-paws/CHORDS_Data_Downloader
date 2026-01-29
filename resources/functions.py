@@ -128,7 +128,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'h1', 'wlo', 'wld', 'wlm', 'wlr', # water level sensors
         'sg', # snow depth sensor
         'pm2_5', 'pm10', 'pm1s10', 'pm1e10', 'pm1s25', 'pm1e25', 'pm1s100', 'pm1e100' # air quality sensors
-        'st1', 'st2', 'st3', 'sm1', 'sm2', 'sm3', # soil temp and soil moisture sensors
+        'st1', 'st2', 'st3', 'sm1', 'sm2', 'sm3', 'tmsms1', 'tmsms2', 'tmsms3', 'tmsms4', 'tmsms5', 'tmsmt1', 'tmsmt2', # soil temp and soil moisture sensors
         'sv1', 'si1', 'su1', 'vis1', 'ir1', 'uv1', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'si1145_vis1', 'si1145_ir1', 'si1145_uv1',
             'si1145_vis2', 'si1145_ir2', 'si1145_uv2', 'si1145_vis3', 'si1145_ir3', 'si1145_uv3', 'si1145_vis4', 'si1145_ir4', 'si1145_uv4',
             'solar1', 'solar2', 'lx', # irradiance sensors
@@ -140,12 +140,14 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'wind_direction', 'wind_direction_compass_dir', 'wg', 'wgd', 'wind_gust_direction_compass_dir', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'bpc'
     ]
     f_sort = [ # FEWSNET
-        'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
+        'rg', 'rg1', 'rg2', 'rgt', 'rgt1', 'rgt2', 'rgp', 'rgp1', 'rgp2',
         'hi',  'wbt', 'wbgt',
         'bt1', 'bt2', 'ht1', 'ht2', 'st1', 'mt1',
         'bh1', 'bh2', 'hh1', 'hh2', 'sh1',
         'bp1', 'bp2',
-        'hth', 'bpc', 'bcs', 'css', 'cfr'
+        'sv1', 'si1', 'su1',
+        'ws', 'wd', 'wg', 'wgd',
+        'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
     ]
     m_sort = [ # Malawi
         ...
@@ -160,7 +162,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bmp_slp', 'bp1', 
         'rg', 'rgt', 'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
         'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir', 
-        'wl', 'wlo', 'wld', 'wlm', 'wlr',
+        'wl', 'wlo', 'wld', 'wlm', 'wlr', 'sg',
         'tmsms1', 'tmsms2', 'tmsms3', 'tmsms4', 'tmsms5', 'tmsmt1', 'tmsmt2', 
         'sv1', 'si1', 'su1', 'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
 
@@ -170,11 +172,12 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'sv1', 'si1', 'su1', 'hth', 'bpc', 'bcs', 'cfr', 'css'
     ]
     z_sort = [ # Zimbabwe
-        'rg1', 'rg2', 'rgt1', 'rgt2', 'rgp1', 'rgp2',
+        'rg', 'rg1', 'rg2', 'rgt', 'rgt1', 'rgt2', 'rgp', 'rgp1', 'rgp2',
         'hi',  'wbt', 'wbgt',
         'bt1', 'st1', 'mt1',
         'bh1', 'sh1',
         'bp1', 'bp2',
+        'ws', 'wd', 'wg', 'wgd',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     fj_sort = [ # Fiji
