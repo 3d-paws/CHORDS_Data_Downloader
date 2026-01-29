@@ -34,20 +34,20 @@ Optional parameters:
 - `time_window_end` - Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.
 
 ## Available Portals
-- 3D-PAWS
-- Barbados
-- Trinidad
-- Dominican Republic
-- Calibration
-- FEWSNET
-- Kenya
-- Zimbabwe
-- Argentina
-- IITM
-- Fiji
-- Bahamas
-- Malawi
-- Somalia
+- `3D-PAWS`
+- `Barbados`
+- `Trinidad`
+- `Dominican-Republic`
+- `Calibration`
+- `FEWSNET`
+- `Kenya`
+- `Zimbabwe`
+- `Argentina`
+- `IITM`
+- `Fiji`
+- `Bahamas`
+- `Malawi`
+- `Somalia`
 
 ## Requirements
 To run this script, you’ll need:
