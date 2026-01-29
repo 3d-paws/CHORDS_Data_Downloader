@@ -44,7 +44,10 @@ Optional parameters:
 - Zimbabwe
 - Argentina
 - IITM
-- FIji
+- Fiji
+- Bahamas
+- Malawi
+- Somalia
 
 ## Requirements
 To run this script, you’ll need:
