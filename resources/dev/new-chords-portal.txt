@@ -1,0 +1,5 @@
+Steps for updating this script when a new CHORDS portal is instansiated:
+
+1. Add the portal name to list of portal names in chords_local_download.py AND chords_dataframes.
+2. Add the portal to the sorting function in functions.py. Define a sort order for the available variables.
+3. Add the portal name to the README on GitHub.
