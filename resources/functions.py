@@ -187,7 +187,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     fj_sort = [ # Fiji
         'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
         'ws', 'wd', 'wg', 'wgd',
-        'rg', 'rgt, 'rgp,
+        'rg', 'rgt', 'rgp',
         'hi', 'wbt', 'wbgt',
         'hth', 'css', 'bcs', 'bpc'
     ]
