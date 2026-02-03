@@ -145,7 +145,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bh1', 'bh2', 'hh1', 'hh2', 'sh1',
         'bp1', 'bp2', 'mslp',
         'sv1', 'si1', 'su1',
-        'ws', 'wd', 'wg', 'wgd',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
     ]
     m_sort = [ # Malawi
@@ -154,12 +154,12 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bt1', 'st1', 'mt1',
         'bh1', 'sh1',
         'bp1', 'bp2', 'mslp',
-        'ws', 'wd', 'wg', 'wgd',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     bh_sort = [ # Bahamas
         'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
-        'ws', 'wd', 'wg', 'wgd',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'rg', 'rgt', 'rgp',
         'hi', 'wbt', 'wbgt',
         'hth', 'css', 'bcs', 'bpc'
@@ -185,12 +185,12 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'bt1', 'st1', 'mt1',
         'bh1', 'sh1',
         'bp1', 'bp2', 'mslp',
-        'ws', 'wd', 'wg', 'wgd',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
     fj_sort = [ # Fiji
         'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
-        'ws', 'wd', 'wg', 'wgd',
+        'ws', 'wd', 'wd_compass_dir' 'wg', 'wgd', 'wgd_compass_dir',
         'rg', 'rgt', 'rgp',
         'hi', 'wbt', 'wbgt',
         'hth', 'css', 'bcs', 'bpc'
