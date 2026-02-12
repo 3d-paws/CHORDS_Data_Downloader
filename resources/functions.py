@@ -208,7 +208,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(threeD_cal_sort)}
     elif portal_name_lower == "FEWSNET".lower():
         column_map = {col: i for i, col in enumerate(f_sort)}
-    elif portal_name_lower == "Dominican Republic".lower():
+    elif portal_name_lower == "Dominican-Republic".lower():
         column_map = {col: i for i, col in enumerate(d_sort)}
     elif portal_name_lower == "Argentina".lower():
         column_map = {col: i for i, col in enumerate(a_sort)}
