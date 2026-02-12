@@ -74,16 +74,16 @@ from pathlib import Path
 fill_empty = ''                 # OPTIONAL
 include_test = False            # OPTIONAL
 
-portal_url = r"https://3d-fewsnet.icdp.ucar.edu/"
-portal_name = "FEWSNET"
-data_path = Path("/Users/rzieber/Downloads/FEWSNET") 
+portal_url = r"https://chords.url.com/"
+portal_name = "Portal Name"
+data_path = Path("C://path//to//local//storage//") 
 instrument_IDs = [
-    
+    1,2,3
 ]
-user_email = 'rzieber@ucar.edu'
-api_key = 'Ln6quExWwxsqLnwa1squ' 
-start = '2026-01-30 00:00:00' 
-end = '2026-02-12 23:59:59'
+user_email = 'your@email.com'
+api_key = 'your-api-key' 
+start = 'YYYY-MM-DD HH:MM:SS' 
+end = 'YYYY-MM-DD HH:MM:SS'
 
 columns_desired = []            # OPTIONAL it is important that the list be empty if no columns are to be specified!
 time_window_start = ''          # OPTIONAL it is important that these be empty strings if no time window is to be specified!
