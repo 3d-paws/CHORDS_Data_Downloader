@@ -33,15 +33,14 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         if time_window_start == "" or time_window_end == "":
             raise ValueError(f"Both the 'time_window_start' and 'time_window_end' variables must be populated to specify a collection timeframe.")
 
-    portal_lookup = [
-        'barbados', 'trinidad', '3d-paws', 'calibration', 'fewsnet', 'kenya', 
-        'zimbabwe', 'dominican-republic', 'argentina', 'zambia', 'iitm', 'fiji',
-        'malawi', 'bahamas', 'somalia'
-    ]
-    if portal_name.lower() not in portal_lookup:
-        raise ValueError(f"Please enter one of the following portal names (case insensitive):\n\t \
-                            Barbados, Trinidad, 3D-PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, IITM, Dominican-Republic, Fiji, "\
-                            "Malawi, Bahamas, Somalia")
+    # portal_lookup = [
+    #     'barbados', 'trinidad', '3d-paws', 'calibration', 'fewsnet', 'kenya', 
+    #     'zimbabwe', 'dominican-republic', 'argentina', 'zambia', 'iitm', 'fiji',
+    #     'malawi', 'bahamas', 'somalia'
+    # ]
+    from chords_downloader.resources.functions import PORTAL_LOOKUP 
+    if portal_name.lower() not in PORTAL_LOOKUP:
+        raise ValueError(f"{portal_name} not found. Supported CHORDS portals include:\n{PORTAL_LOOKUP}")
     
     # Processing loop ------------------------------------------------------------------------------------------------------------------
     for iD in instrument_IDs:
