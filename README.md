@@ -46,7 +46,7 @@ pip install -e .
 
 ## Utilization
 To download data via the API, determine which method suits your application. See the discussion above to compare `chords_local_download.py` and `chords_dataframes.py`.
-Next, simply imput your user parameters in `main.py` and run the following:
+Next, simply imput your user parameters in `main.py` and run the following command in your terminal window:
 ```bash
 chords-download
 ```
