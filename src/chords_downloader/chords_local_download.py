@@ -1,98 +1,17 @@
-"""
-CHORDS Data Downloader - modified by Rebecca Zieber
-
-This script calls the CHORDS API to extract data as specified by the user parameters and returns a CSV.
-A new CSV is created for each instrument.
-
-To use this script, fill out the user parameters before the main program.
-
-User Parameter Breakdown:
-    - fill_empty: [OPTIONAL] Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).
-    - include_test: [OPTIONAL] Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default).
-    - portal_url: The url for the CHORDS online portal.
-    - portal_name: The name of the CHORDS portal, choose from this list (case sensitive): Barbados, Trinidad, 3D PAWS, 3D Calibration, FEWNSET, Kenya, Cayman Islands
-    - data_path: The absolute folder path specifying where the CSV files should be printed to locally.
-    - instrument_IDs: All the instruments to download data from. Use the Instrument Id from CHORDS portal.
-    - user_email: The email login information in order to access the CHORDS online portal.
-    - api_key: The API key which corresponds to the user's email address.
-    - start: The timestamp from which to start downloading data (MUST be in the following format: 'YYYY-MM-DD HH:MM:SS' e.g. '2023-11-25 00:00:00').
-    - end: The timestamp at which to end downloading data (MUST be in the following format: 'YYYY-MM-DD HH:MM:SS' e.g. '2023-11-31 23:59:59'). * see 'Usage'
-    - columns_desired: [OPTIONAL] Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.
-    - time_window_start: [OPTIONAL] Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.
-    - time_window_end: [OPTIONAL] Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.
-
-Usage:
-    - If you want your download to exactly match a data download from CHORDS, it may be helpful to download a single day's worth of data off the CHORDS website 
-      to see the hour at which a new day starts. Depending on the portal, CHORDS will start a new day at 0600Z, 0700Z, or 0800Z. 
-    - Because CHORDS days aren't from midnight-to-midnight, the 'end' parameter must reflect the extension into the next day. 
-      e.g. June 20th for FEWSNET goes from 2024-06-20 06:00:00 to 2024-06-21 05:45:59
-    - Timestamps must include seconds, which could affect the 'end' parameter you chose to use. CHORDS timestamps are frequently timestamped at 01, 02, or 03 seconds,
-      so it may not be good enough for the 'end' parameter to read 23:59:00, for example, you may have to specify 23:59:59 to include that last datapoint on the 59th minute.
-    - To use the columns_desired parameter, which can be useful when downloading large datasets where you only care about a few columns, use the shortname listed on 
-      CHORDS for the variable you want to include (e.g. mcp9808 -> mt1)
-
-    - EXAMPLE -------------------------------- 
-        A new day for the FEWS NET portal starts at 0600Z the study period is from Jan 1st through July 1st. This means the 'end' parameter will have to end on July 2nd 
-            in order to capture the full CHORDS day.
-        The first 24 stations transmit data every 15 minutes, so in order to capture the last observation in a day, the 'end' parameter is set to 05:45:59. 
-        This analysis will only require daily rainfall data, so the shortnames 'rgt1', 'rgt2', 'rgp1', and 'rgp2' are specified in 'columns_desired'. This analysis doesn't require 
-            all the 15-minute obs, the focus is on the time of day when the daily rainfall totals reset, so the variables 'time_window_start' and 'time_window_end' are used to 
-            filter the data between 05:45:00 and 06:00:59 to capture this reset.
-
-            
-        fill_empty = ''
-        include_test = False
-        portal_url = r"https://3d-fewsnet.icdp.ucar.edu/" 
-        portal_name = "FEWSNET"
-        data_path = r"C:\\path\\to\\output\\folder\\" 
-        instrument_IDs = [
-            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
-        ]
-
-        user_email = 'your-chords@email.com'
-        api_key = 'your-chords-api-key' 
-        start = '2024-01-01 06:00:00' 
-        end = '2024-07-02 05:45:59'
-
-        columns_desired = ['rgt1', 'rgt2', 'rgp1', 'rgp2']
-        time_window_start = '05:45:00'
-        time_window_end = '06:00:59' 
-      
-
-"""
 import requests
 from json import dumps
 from json import loads
 import numpy as np
 from datetime import datetime, timedelta
-import sys
-import resources
+import argparse
+from chords_downloader import resources
 from pathlib import Path
 
-# User Parameters --------------------------------------------------------------------------------------------------------------------
-
-fill_empty = ''                 # OPTIONAL
-include_test = False            # OPTIONAL
-
-portal_url = r"https://chords.url.com/"
-portal_name = "Portal Name"
-data_path = Path("C://path//to//local//storage//") 
-instrument_IDs = [
-    1,2,3
-]
-user_email = 'your@email.com'
-api_key = 'your-api-key' 
-start = 'YYYY-MM-DD HH:MM:SS' 
-end = 'YYYY-MM-DD HH:MM:SS'
-
-columns_desired = []            # OPTIONAL it is important that the list be empty if no columns are to be specified!
-time_window_start = ''          # OPTIONAL it is important that these be empty strings if no time window is to be specified!
-time_window_end = '' 
-
-# MAIN PROGRAM ------------------------------------------------------------------------------------------------------------------------
-
-def main():
-    # user input validation -----------------------------------------------------------------------------------------------------------
+def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, user_email:str, 
+         api_key:str, start:str, end:str, fill_empty='', include_test:bool=False, columns_desired:list=[], 
+         time_window_start:str='', time_window_end:str=''):
+ 
+    # User input validation -----------------------------------------------------------------------------------------------------------
     format_str = "%Y-%m-%d %H:%M:%S"
     timestamp_start = datetime.strptime(start, format_str) 
     timestamp_end = datetime.strptime(end, format_str)
@@ -124,7 +43,7 @@ def main():
                             Barbados, Trinidad, 3D-PAWS, Calibration, FEWSNET, Kenya, Zimbabwe, Zambia, Argentina, IITM, Dominican-Republic, Fiji, "\
                             "Malawi, Bahamas, Somalia")
     
-    # processing loop ------------------------------------------------------------------------------------------------------------------
+    # Processing loop ------------------------------------------------------------------------------------------------------------------
     for iD in instrument_IDs:
         if not isinstance(iD, int):
             raise TypeError(f"The instrument id's must be integers, passed {type(iD)} for id {iD}")
@@ -194,5 +113,42 @@ def main():
                 file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
 
 
+def parse_args() -> tuple[str, str, Path, list[int], str, str, str, str]:
+    parser = argparse.ArgumentParser(
+        description="Process API user parameters: portal_url, portal_name, data_path, instrument_IDs, user_email, api_key, start, and end."
+    )
+
+    parser.add_argument("portal_url",           type=str,   help="The url for the CHORDS online portal.")
+    parser.add_argument("portal_name",          type=str,   help="The name of the CHORDS portal.")
+    parser.add_argument("data_path",            type=Path,  help="The folder path to local storage where csv's will be exported.")
+    parser.add_argument("instrument_IDs",       type=Path,  help="All the instruments to download data from. Use the Instrument Id from CHORDS portal.")
+    parser.add_argument("user_email",           type=str,   help="The email login information in order to access the CHORDS online portal.")
+    parser.add_argument("api_key",              type=str,   help="The API key which corresponds to the user's email address.")
+    parser.add_argument("start",                type=str,   help="The timestamp from which to start downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
+    parser.add_argument("end",                  type=str,   help="The timestamp at which to stop downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
+    parser.add_argument("-fill_empty",                      help="Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).")
+    parser.add_argument("-include_test",        type=bool,  help="Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default). ")
+    parser.add_argument("-columns_desired",     type=list,  help="Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.")
+    parser.add_argument("-time_window_start",   type=str,   help="Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.")
+    parser.add_argument("-time_window_end",     type=str,   help="Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.")
+
+    args = parser.parse_args()
+    return (
+        args.portal_url, 
+        args.portal_name, 
+        args.data_path,
+        args.instrument_IDs, 
+        args.user_email, 
+        args.api_key, 
+        args.start, 
+        args.end, 
+        args.fill_empty, 
+        args.include_test,
+        args.columns_desired,
+        args.time_window_start,
+        args.time_window_end
+    )
+
+
 if __name__ == "__main__":
-    main()
+    main(*parse_args())

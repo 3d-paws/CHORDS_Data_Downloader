@@ -1,0 +1,1 @@
+from chords_downloader import resources

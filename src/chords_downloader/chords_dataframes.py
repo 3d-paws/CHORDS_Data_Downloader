@@ -1,30 +1,9 @@
-"""
-CHORDS Data Downloader - modified by Rebecca Zieber
-
-This script calls the CHORDS API to extract data as specified by the user parameters and returns a list of dataframes.
-A new df is created for each instrument. This version of the CHORDS Data Downloader is intended for use as a module by 
-an external program.
-
-User Parameter Breakdown:
-    - fill_empty: [OPTIONAL] Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).
-    - include_test: [OPTIONAL] Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default).
-    - portal_url: The url for the CHORDS online portal.
-    - portal_name: The name of the CHORDS portal
-    - instrument_IDs: All the instruments to download data from. Use the Instrument Id from CHORDS portal.
-    - user_email: The email login information in order to access the CHORDS online portal.
-    - api_key: The API key which corresponds to the user's email address.
-    - start: The timestamp from which to start downloading data (MUST be in the following format: 'YYYY-MM-DD HH:MM:SS' e.g. '2023-11-25 00:00:00').
-    - end: The timestamp at which to end downloading data (MUST be in the following format: 'YYYY-MM-DD HH:MM:SS' e.g. '2023-11-31 23:59:59'). * see 'Usage'
-    - columns_desired: [OPTIONAL] Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.
-    - time_window_start: [OPTIONAL] Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.
-    - time_window_end: [OPTIONAL] Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.
-"""
 import requests
 from json import dumps
 from json import loads
 import numpy as np
 from datetime import datetime, timedelta
-import resources
+from chords_downloader import resources
 from pathlib import Path
 import argparse
 
@@ -138,21 +117,21 @@ def main(
 
 def parse_args() -> tuple[str, str, Path, list[int], str, str, str, str]:
     parser = argparse.ArgumentParser(
-        description="Process API user parameters: portal_url, portal_name, data_path, instrument_IDs, user_email, api_key, start, and end."
+        description="Process API user parameters: portal_url, portal_name, instrument_IDs, user_email, api_key, start, and end."
     )
 
-    parser.add_argument("portal_url", type=str, help="The url for the CHORDS online portal.")
-    parser.add_argument("portal_name", type=str, help="The name of the CHORDS portal.")
-    parser.add_argument("instrument_IDs", type=Path, help="All the instruments to download data from. Use the Instrument Id from CHORDS portal.")
-    parser.add_argument("user_email", type=str, help="The email login information in order to access the CHORDS online portal.")
-    parser.add_argument("api_key", type=str, help="The API key which corresponds to the user's email address.")
-    parser.add_argument("start", type=str, help="The timestamp from which to start downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
-    parser.add_argument("end", type=str, help="The timestamp at which to stop downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
-    parser.add_argument("-fill_empty", help="Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).")
-    parser.add_argument("-include_test", type=bool, help="Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default). ")
-    parser.add_argument("-columns_desired", type=list, help="Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.")
-    parser.add_argument("-time_window_start", type=str, help="Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.")
-    parser.add_argument("-time_window_end", type=str, help="Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.")
+    parser.add_argument("portal_url",           type=str,   help="The url for the CHORDS online portal.")
+    parser.add_argument("portal_name",          type=str,   help="The name of the CHORDS portal.")
+    parser.add_argument("instrument_IDs",       type=Path,  help="All the instruments to download data from. Use the Instrument Id from CHORDS portal.")
+    parser.add_argument("user_email",           type=str,   help="The email login information in order to access the CHORDS online portal.")
+    parser.add_argument("api_key",              type=str,   help="The API key which corresponds to the user's email address.")
+    parser.add_argument("start",                type=str,   help="The timestamp from which to start downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
+    parser.add_argument("end",                  type=str,   help="The timestamp at which to stop downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
+    parser.add_argument("-fill_empty",                      help="Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).")
+    parser.add_argument("-include_test",        type=bool,  help="Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default). ")
+    parser.add_argument("-columns_desired",     type=list,  help="Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.")
+    parser.add_argument("-time_window_start",   type=str,   help="Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.")
+    parser.add_argument("-time_window_end",     type=str,   help="Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.")
 
     args = parser.parse_args()
     return (

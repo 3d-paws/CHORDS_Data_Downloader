@@ -5,6 +5,7 @@ There are two primary data extraction options:<br><br>
 `chords_local_download.py` - creates csv's on local hard drive<br>
 `chords_dataframes.py` - returns a list of dataframes (more useful for automation as a part of an external workflow, less common)
 
+
 ## Features
 - Retrieves data from the CHORDS database
 - Supports customizable API parameters
@@ -12,25 +13,45 @@ There are two primary data extraction options:<br><br>
 - Saves the downloaded data as a CSV or as a Pandas dataframe, with variable (sensor) shortnames used as column headers (see associated CHORDS portal for full sensor name)
 - Includes API error handling, most noteably an exponential backoff method to reduce excess datapoints
 
-## Requirements
-To run this script, you’ll need:
+
+## Setup
+To run this script, you will need:
 - Python 3.6 or higher
+- An IDE to execute scripts
+- An account on CHORDS with:
+  - Download privileges
+  - An API key
 - The following Python libraries:
   - `requests` for making API requests
   - `pandas` for CSV creation
-  - `numpy` 
+  - `numpy` for vectorized operations
 
-Install the required libraries with:
-
+Create a virtual environment:
+```bash
+python -m venv .venv
+```
+Then activate the virtual environment. <br>
+Windows:
+```bash
+.venv\Scripts\activate
+```
+macOS/Linux:
+```bash
+source .venv/bin/activate
+```
+Lastly, install the required Python libraries:
 ```bash
 pip install -r requirements.txt
+pip install -e .
 ```
-You will also need an account on the CHORDS portal you are trying to download data from. Your account must have download privileges as well as an API key.
 
 ## Utilization
 To download data via the API, determine which method suits your application. See the discussion above to compare `chords_local_download.py` and `chords_dataframes.py`.
-Next, simply imput your user parameters at the top of the script and run the program in your IDE.<br>
-NOTE: Column names are the sensor shortnames. See the associated CHORDS portal for the sensor full name.<br>
+Next, simply imput your user parameters in `main.py` and run the following command:<br>
+```bash
+chords-download
+```
+NOTE: Column names are the sensor shortnames. See the associated CHORDS portal for the sensor full names.<br>
 <br>
 Required parameters:
 - `portal_url` - The url for the CHORDS online portal.
@@ -49,6 +70,7 @@ Optional parameters:
 - `time_window_start` - Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.
 - `time_window_end` - Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.
 
+
 ## Available Portals
 - `3D-PAWS`
 - `Barbados`
@@ -64,6 +86,7 @@ Optional parameters:
 - `Bahamas`
 - `Malawi`
 - `Somalia`
+
 
 ## Documentation
 In-depth documentation may be found at: https://docs.google.com/document/d/1qqs5X0vSslAEYBxlAh95oDgC1dG5xmBKVknz7wl1QxA/edit?usp=sharing
