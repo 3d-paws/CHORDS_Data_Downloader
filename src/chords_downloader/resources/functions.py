@@ -72,6 +72,26 @@ def write_compass_direction(dictionary:dict, fill_empty) -> dict:
 
 
 """
+Reads available CHORDS portals from portals.txt and exports as a list.
+"""
+def load_portals(path: str | Path | None = None) -> list[str]:
+    if path is None:
+        path = Path(__file__).with_name("portals.txt")
+    else:
+        path = Path(path)
+
+    with path.open() as f:
+        portals = [
+            line.strip()
+            for line in f
+            if line.strip() and not line.lstrip().startswith("#")
+        ]
+    return portals
+
+PORTAL_LOOKUP = load_portals("src/chords_downloader/resources/dev/portals.txt")
+
+
+"""
 Helper function for build_headers() that checks if a header is in the known set of headers.
 """
 def headers_are_valid(columns_desired:list, columns_found:list, portal_name:str) -> bool:
