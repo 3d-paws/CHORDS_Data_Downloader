@@ -6,16 +6,16 @@ Authored by Rebecca Zieber
 from pathlib import Path
 from chords_downloader import chords_local_download, chords_dataframes
 
-PORTAL_URL = r"https://3d-fewsnet.icdp.ucar.edu/"
-PORTAL_NAME = "FEWSNET"
-DATA_PATH = Path("/Users/rzieber/Downloads") 
+PORTAL_URL = r"https://chords.url.com/"
+PORTAL_NAME = "Portal Name"
+DATA_PATH = Path("C://path//to//local//storage//") 
 INSTRUMENT_IDS = [
     1,2,3
 ]
-USER_EMAIL = 'rzieber@ucar.edu'
-API_KEY = 'QSy8irrRowbi6ys-5PHe' 
-START = '2026-01-07 00:00:00' 
-END = '2026-01-14 23:59:59'
+USER_EMAIL = 'your@email.com'
+API_KEY = 'your-api-key' 
+START = 'YYYY-MM-DD HH:MM:SS' 
+END = 'YYYY-MM-DD HH:MM:SS'
 
 def main():
     # To download csv's locally to your machine (most common):

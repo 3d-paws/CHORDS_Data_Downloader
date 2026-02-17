@@ -15,3 +15,16 @@ end = 'YYYY-MM-DD HH:MM:SS'
 columns_desired = []            # OPTIONAL it is important that the list be empty if no columns are to be specified!
 time_window_start = ''          # OPTIONAL it is important that these be empty strings if no time window is to be specified!
 time_window_end = '' 
+
+-------------------------------------------------------------------
+
+PORTAL_URL = r"https://chords.url.com/"
+PORTAL_NAME = "Portal Name"
+DATA_PATH = Path("C://path//to//local//storage//") 
+INSTRUMENT_IDS = [
+    1,2,3
+]
+USER_EMAIL = 'your@email.com'
+API_KEY = 'your-api-key' 
+START = 'YYYY-MM-DD HH:MM:SS' 
+END = 'YYYY-MM-DD HH:MM:SS'
