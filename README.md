@@ -84,4 +84,5 @@ Optional parameters:
 - `Fiji`
 - `Bahamas`
 - `Malawi`
+- `Jamaica`
 - `Somalia`
