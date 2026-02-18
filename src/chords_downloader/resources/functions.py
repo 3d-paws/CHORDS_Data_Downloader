@@ -222,6 +222,24 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hi', 'wbt', 'wbgt',
         'hth', 'css', 'bcs', 'bpc'
     ]
+    k_sort = [ # Kenya
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
+        'rg', 'rgt', 'rgp',
+        'hi', 'wbt', 'wbgt',
+        'hth', 'css', 'bcs', 'bpc'
+    ]
+    i_sort = [ # IITM
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
+        'rg', 'rgt', 'rgp',
+        'hi', 'wbt', 'wbgt',
+        'hth', 'css', 'bcs', 'bpc'
+    ]
+    zm_sort = [ # Zambia
+        'mcp9808', 'bmp_temp', 'htu21d_temp', 'htu21d_humidity', 'bmp_pressure', 'bmp_slp', 'bme_pressure',
+        'wind_speed', 'wind_direction', 'si1145_vis', 'si1145_ir', 'si1145_uv', 'rain'
+    ]
 
     portal_name_lower = portal_name.lower()
 
@@ -249,6 +267,12 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(bh_sort)}
     elif portal_name_lower == "Jamaica".lower():
         column_map = {col: i for i, col in enumerate(j_sort)}
+    elif portal_name_lower == "Kenya".lower():
+        column_map = {col: i for i, col in enumerate(k_sort)}
+    elif portal_name_lower == "IITM".lower():
+        column_map = {col: i for i, col in enumerate(i_sort)}
+    elif portal_name_lower == "Zambia".lower():
+        column_map = {col: i for i, col in enumerate(zm_sort)}
     elif portal_name_lower == "Somalia".lower():
         ...
         # column_map = {col: i for i, col in enumerate(sm_sort)}
