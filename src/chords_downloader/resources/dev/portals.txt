@@ -13,3 +13,4 @@ fiji
 malawi
 bahamas
 somalia
+jamaica

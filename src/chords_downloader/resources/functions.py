@@ -215,6 +215,13 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hi', 'wbt', 'wbgt',
         'hth', 'css', 'bcs', 'bpc'
     ]
+    j_sort = [ # Jamaica
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
+        'rg', 'rgt', 'rgp',
+        'hi', 'wbt', 'wbgt',
+        'hth', 'css', 'bcs', 'bpc'
+    ]
 
     portal_name_lower = portal_name.lower()
 
@@ -240,6 +247,8 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(m_sort)}
     elif portal_name_lower == "Bahamas".lower():
         column_map = {col: i for i, col in enumerate(bh_sort)}
+    elif portal_name_lower == "Jamaica".lower():
+        column_map = {col: i for i, col in enumerate(j_sort)}
     elif portal_name_lower == "Somalia".lower():
         ...
         # column_map = {col: i for i, col in enumerate(sm_sort)}
