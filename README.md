@@ -44,7 +44,7 @@ python -m venv .venv
 ```
 Install dependencies:
 ```powershell
-pip install -r requirements.txt
+pip install requests numpy pandas
 ```
 Verify installation:
 ```powershell
