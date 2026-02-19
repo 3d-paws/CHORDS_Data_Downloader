@@ -10,21 +10,21 @@ the associated CHORDS website.
 ## Quick Start (5 minutes)
 1. **Clone/download** this repo
 2. **Open terminal** in project root
-3. **Create & activate virtual environment**:
-   \\ PC 
+3. **Create & activate virtual environment**<br>
+   PC 
    ```powershell
    python -m venv .venv
    .\.venv\Scripts\Activate.ps1
    ```
-   \\ macOS/Linux
+   macOS/Linux
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
-4. **Install dependencies**
+4. **Install dependencies**<br>
    ```pip install -r requirements.txt```
-5. **Edit `src/chords_downloader/main.py` with your:**
-    - `PORTAL_NAME` (e.g. `'Bahamas'`)
+5. **Edit `src/chords_downloader/main.py` with your**
+    - `PORTAL_NAME` (see list of available portals below)
     - `INSTRUMENT_IDS` (list from CHORDS portal)
     - `USER_EMAIL` and `API_KEY`
     - `START`/`END` timestamps
