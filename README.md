@@ -7,7 +7,7 @@ the associated CHORDS website.
 - Python **3.8+** 
 - CHORDS account with **API key** and download privileges
 
-## Quick Start (5 minutes)
+## Quick Start
 1. **Clone/download** this repo
 2. **Open terminal** in project root
 3. **Create & activate virtual environment**<br>
