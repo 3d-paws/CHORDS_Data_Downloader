@@ -25,7 +25,7 @@ the associated CHORDS website.
    ```pip install -r requirements.txt```
 5. **Edit `src/chords_downloader/main.py` with your**
     - `PORTAL_NAME` (see list of available portals below)
-    - `INSTRUMENT_IDS` (list from CHORDS portal)
+    - `INSTRUMENT_IDS` (unique ID's from CHORDS portal)
     - `USER_EMAIL` and `API_KEY`
     - `START`/`END` timestamps
 6. **Run**
