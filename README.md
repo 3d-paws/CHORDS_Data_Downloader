@@ -85,3 +85,7 @@ pandas --version
 - `Malawi`
 - `Jamaica`
 - `Somalia`
+
+## Troubleshooting
+See Windows-specific setup tips here:<br>
+https://drive.google.com/file/d/1TsTg8LvilrUqBZpj7nq3RsUV5CsSwjB_/view?usp=drive_link
