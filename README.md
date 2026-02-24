@@ -70,21 +70,20 @@ pandas --version
 ```
 
 ## Available Portals
-- `3D-PAWS`
-- `Barbados`
-- `Trinidad`
-- `Dominican-Republic`
-- `Calibration`
-- `FEWSNET`
-- `Kenya`
-- `Zimbabwe`
-- `Argentina`
-- `IITM`
-- `Fiji`
-- `Bahamas`
-- `Malawi`
-- `Jamaica`
-- `Somalia`
+- `3D-PAWS`            | `https:\\3d.chordsrt.com`
+- `Barbados`           | `https:\\3d-barbados.chordsrt.com` 
+- `Trinidad`           | `https:\\3d-trinidad.chordsrt.com`
+- `Dominican-Republic` | `https:\\3d-dr.icdp.ucar.edu`
+- `Calibration`        | `https:\\3d-calibration.chordsrt.com`  
+- `FEWSNET`            | `https:\\3d-fewsnet.icdp.ucar.edu`
+- `Kenya`              | `https:\\3d-kenya.chordsrt.com`  
+- `Zimbabwe`           | `https:\\3d-zimbabwe.icdp.ucar.edu`
+- `Argentina`          | `https:\\3d-argentina.icdp.ucar.edu` 
+- `IITM`               | `https:\\3d-iitm.icdp.ucar.edu`
+- `Fiji`               | `https:\\3d-fiji.icdp.ucar.edu`
+- `Bahamas`            | `http:\\3d-bahamas.icdp.ucar.edu`
+- `Malawi`             | `http:\\3d-malawi.icdp.ucar.edu`
+- `Jamaica`            | `http:\\3d-jamaica.icdp.ucar.edu`
 
 ## Troubleshooting
 See Windows-specific setup tips here:<br>
