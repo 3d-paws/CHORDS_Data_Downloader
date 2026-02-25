@@ -185,7 +185,14 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'hth', 'css', 'bcs', 'bpc'
     ]
     sm_sort = [ # Somalia 
-        ... # don't forget to uncomment the map down below!
+        'rg', 'rg1', 'rg2', 'rgt', 'rgt1', 'rgt2', 'rgp', 'rgp1', 'rgp2',
+        'hi',  'wbt', 'wbgt',
+        'bt1', 'bt2', 'ht1', 'ht2', 'st1', 'mt1',
+        'bh1', 'bh2', 'hh1', 'hh2', 'sh1',
+        'bp1', 'bp2', 'mslp',
+        'sv1', 'si1', 'su1',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
+        'hth', 'bpc', 'bcs', 'css', 'cfr', 'bv'
     ]
     d_sort = [ # Dominican Republic
         'ht1', 'st1', 'bt1', 'mt1', 'hh1', 'sh1', 'bp1', 'mslp', 'bmp_slp', 
@@ -285,8 +292,7 @@ def sort_columns(columns:list, portal_name:str) -> list:
     elif portal_name_lower == "Ethiopia".lower():
         column_map = {col: i for i, col in enumerate(e_sort)}
     elif portal_name_lower == "Somalia".lower():
-        ...
-        # column_map = {col: i for i, col in enumerate(sm_sort)}
+        column_map = {col: i for i, col in enumerate(sm_sort)}
     else:
         print("Portal provided does not have a specified sort order.")
 
