@@ -85,6 +85,7 @@ pandas --version
 - `Malawi`             | `http:\\3d-malawi.icdp.ucar.edu`
 - `Jamaica`            | `http:\\3d-jamaica.icdp.ucar.edu`
 - `Ethiopia`           | `http:\\3d-ethiopia.icdp.ucar.edu`
+- `Somalia`            | `http:\\3d-somalia.icdp.ucar.edu`
 
 ## Troubleshooting
 See Windows-specific setup tips here:<br>
