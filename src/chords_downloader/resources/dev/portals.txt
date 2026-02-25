@@ -14,3 +14,4 @@ malawi
 bahamas
 somalia
 jamaica
+ethiopia
