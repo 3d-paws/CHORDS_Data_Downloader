@@ -1,4 +1,5 @@
 import requests
+import warnings
 from json import dumps
 from json import loads
 import numpy as np
@@ -18,14 +19,12 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
     if timestamp_start > timestamp_end:
             raise ValueError(f"Starting time cannot be after end time.\n\t\t\tStart: {timestamp_start}\t\tEnd: {timestamp_end}")
     if (timestamp_start < datetime.now() - timedelta(days=365*2)):
-            raise ValueError(
-                "\t ========================= WARNING ========================="\
-                f"\t timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n"
+            warnings.warn(
+                f"\t[WARNING]: timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n"
             )
     if (timestamp_end > datetime.now()) or (timestamp_start > datetime.now()):
-            raise ValueError(
-                "\t ========================= WARNING ========================="\
-                f"\t timestamp_start or timestamp_end in the future: {timestamp_start}\t{timestamp_end}\n\t Will pull up to today's date only.\n"
+            warnings.warn(
+                f"\t[WARNING]: timestamp_start or timestamp_end in the future: {timestamp_start}\t{timestamp_end}\n\t Will pull up to today's date only.\n"
             )
 
     if time_window_start != "" or time_window_end != "":
