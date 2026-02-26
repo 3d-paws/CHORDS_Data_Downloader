@@ -51,6 +51,7 @@ Verify installation:
 requests --version
 numpy --version
 pandas --version
+pytest --version
 ```
 #### MacOS/Linux
 For macOS/Linux, set up a virtual environment and activate it:
