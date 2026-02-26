@@ -88,8 +88,10 @@ def load_portals(path: str | Path | None = None) -> list[str]:
         ]
     return portals
 
-PORTAL_LOOKUP = load_portals("src/chords_downloader/resources/dev/portals.txt")
-
+HERE = Path(__file__).parent
+PORTAL_LOOKUP = load_portals(
+    HERE / "dev" / "portals.txt"
+)
 
 """
 Helper function for build_headers() that checks if a header is in the known set of headers.

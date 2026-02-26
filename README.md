@@ -44,7 +44,7 @@ python -m venv .venv
 ```
 Install dependencies:
 ```powershell
-pip install requests numpy pandas
+pip install requests numpy pandas pytest
 ```
 Verify installation:
 ```powershell
@@ -67,6 +67,7 @@ Verify installation:
 requests --version
 numpy --version
 pandas --version
+pytest --version
 ```
 
 ## Available Portals
