@@ -1,4 +1,5 @@
 import requests
+import warnings
 from json import dumps
 from json import loads
 import numpy as np
@@ -17,12 +18,14 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
     timestamp_end = datetime.strptime(end, format_str)
     if timestamp_start > timestamp_end:
             raise ValueError(f"Starting time cannot be after end time.\n\t\t\tStart: {timestamp_start}\t\tEnd: {timestamp_end}")
-    if timestamp_start < datetime.now() - timedelta(days=365*2):
-        print("\t ========================= WARNING =========================")
-        print(f"\t timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n")
-    if timestamp_end > datetime.now():
-        print("\t ========================= WARNING =========================")
-        print(f"\t timestamp_end in the future: {timestamp_end}\n\t Will pull up to today's date only.\n")
+    if (timestamp_start < datetime.now() - timedelta(days=365*2)):
+            warnings.warn(
+                f"\t[WARNING]: timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n"
+            )
+    if (timestamp_end > datetime.now()) or (timestamp_start > datetime.now()):
+            warnings.warn(
+                f"\t[WARNING]: timestamp_start or timestamp_end in the future: {timestamp_start}\t{timestamp_end}\n\t Will pull up to today's date only.\n"
+            )
 
     if time_window_start != "" or time_window_end != "":
         format_str = "%H:%M:%S"
@@ -33,11 +36,6 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         if time_window_start == "" or time_window_end == "":
             raise ValueError(f"Both the 'time_window_start' and 'time_window_end' variables must be populated to specify a collection timeframe.")
 
-    # portal_lookup = [
-    #     'barbados', 'trinidad', '3d-paws', 'calibration', 'fewsnet', 'kenya', 
-    #     'zimbabwe', 'dominican-republic', 'argentina', 'zambia', 'iitm', 'fiji',
-    #     'malawi', 'bahamas', 'somalia'
-    # ]
     from chords_downloader.resources.functions import PORTAL_LOOKUP 
     if portal_name.lower() not in PORTAL_LOOKUP:
         raise ValueError(f"{portal_name} not found. Supported CHORDS portals include:\n{PORTAL_LOOKUP}")

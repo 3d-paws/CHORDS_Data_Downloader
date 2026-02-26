@@ -4,3 +4,4 @@ __pycache__/
 *.so
 .venv/
 chords_downloader.egg-info/
+.pytest_cache/

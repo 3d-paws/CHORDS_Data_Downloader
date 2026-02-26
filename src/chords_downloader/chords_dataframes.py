@@ -34,11 +34,6 @@ def main(
         if time_window_start == "" or time_window_end == "":
             raise ValueError(f"Both the 'time_window_start' and 'time_window_end' variables must be populated to specify a collection timeframe.")
 
-    # portal_lookup = [
-    #     'barbados', 'trinidad', '3d-paws', 'calibration', 'fewsnet', 'kenya', 
-    #     'zimbabwe', 'dominican-republic', 'argentina', 'zambia', 'iitm', 'fiji',
-    #     'malawi', 'bahamas', 'somalia'
-    # ]
     from chords_downloader.resources.functions import PORTAL_LOOKUP
     if portal_name.lower() not in PORTAL_LOOKUP:
         raise ValueError(f"{portal_name} not found. Supported CHORDS portals include:\n{PORTAL_LOOKUP}")

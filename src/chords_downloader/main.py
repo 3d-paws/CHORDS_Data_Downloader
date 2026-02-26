@@ -7,16 +7,16 @@ from pathlib import Path
 from chords_downloader import chords_local_download, chords_dataframes
 
 
-PORTAL_URL = r"https://chords.url.com/"
-PORTAL_NAME = "Portal Name"
-DATA_PATH = Path("C://path//to//local//storage//") 
+PORTAL_URL = r"https://3d.chordsrt.com"
+PORTAL_NAME = "3D-PAWS"
+DATA_PATH = Path("/Users/rzieber/Downloads") 
 INSTRUMENT_IDS = [
     1,2,3
 ]
-USER_EMAIL = 'your@email.com'
-API_KEY = 'your-api-key' 
-START = 'YYYY-MM-DD HH:MM:SS' 
-END = 'YYYY-MM-DD HH:MM:SS'
+USER_EMAIL = 'rzieber@ucar.edu'
+API_KEY = 'pc7HQpcDipWsetaxmJ5t' 
+START = '2025-02-03 00:00:00' 
+END = '2025-02-03 22:59:59'
 
 def main():
     # To download csv's locally to your machine (most common):
