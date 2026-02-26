@@ -91,3 +91,9 @@ pytest --version
 ## Troubleshooting
 See Windows-specific setup tips here:<br>
 https://drive.google.com/file/d/1TsTg8LvilrUqBZpj7nq3RsUV5CsSwjB_/view?usp=drive_link
+
+## Dev
+Run the following to test changes:
+```bash
+pytest -v
+```
