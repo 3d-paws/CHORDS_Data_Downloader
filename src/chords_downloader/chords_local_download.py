@@ -33,8 +33,6 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         timestamp_window_end = datetime.strptime(time_window_end, format_str).time()
         if time_window_start > time_window_end:
             raise ValueError(f"The start time for the time window is after the end time: {time_window_start} > {time_window_end}")
-        if time_window_start == "" or time_window_end == "":
-            raise ValueError(f"Both the 'time_window_start' and 'time_window_end' variables must be populated to specify a collection timeframe.")
 
     from chords_downloader.resources.functions import PORTAL_LOOKUP 
     if portal_name.lower() not in PORTAL_LOOKUP:
@@ -103,8 +101,9 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
             print(f"\t Finished writing to file.\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             print(f"\t Total number of measurements: {total_num_measurements}")
         else:
-            print("\t ========================= WARNING =========================")
-            print(f"\t No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n")
+            warnings.warn(
+                f"\t[WARNING]: No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n"
+            )
             file_path = data_path / f"{portal_name}_Instrument-{iD}_[WARNING].txt"
             with open(file_path, 'w') as file:
                 file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
