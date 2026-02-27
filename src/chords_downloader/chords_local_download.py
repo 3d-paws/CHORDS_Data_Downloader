@@ -55,9 +55,10 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
 
             url = f"{portal_url}/api/v1/data/{iD}?start={start}&end={end}&email={user_email}&api_key={api_key}"
             response = requests.get(url=url)
-            all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
-            if resources.has_errors(all_fields, portal_name, iD):
+            if resources.has_errors(response, portal_name, iD):
                 continue
+
+            all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
             
             if resources.has_excess_datapoints(all_fields): # reduce timeframe in API call
                 print("\t Large data request -- reducing.")
@@ -72,7 +73,7 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
                 data = all_fields['features'][0]['properties']['data']  # list of dictionaries 
                                                                         # ( e.g. {'time': '2023-12-17T18:45:56Z', 'test': 'false', 'measurements': {'ws': 1.55, 'rain': 1}} )
                 for i in range(len(data)):
-                    t = resources.get_time(data[i]['time'])
+                    # t = resources.get_time(data[i]['time'])
                     time.append(str(data[i]['time']))
                     total_num_measurements += len(data[i]['measurements'].keys())
                     total_num_timestamps += 1

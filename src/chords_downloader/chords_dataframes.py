@@ -57,10 +57,11 @@ def main(
 
             url = f"{portal_url}/api/v1/data/{iD}?start={start}&end={end}&email={user_email}&api_key={api_key}"
             response = requests.get(url=url)
-            all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
-
-            if resources.has_errors(all_fields, portal_name, iD):
+            if resources.has_errors(response, portal_name, iD):
                 continue
+
+            all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
+            
             
             if resources.has_excess_datapoints(all_fields): # reduce timeframe in API call
                 print("\t Large data request -- reducing.")

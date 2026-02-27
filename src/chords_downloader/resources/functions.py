@@ -477,32 +477,70 @@ def struct_has_data(measurements:np.ndarray, time:np.ndarray, test:np.ndarray) -
     return flag
 
 
-"""
-Accepts the resulting data stream of API request, and checks if any of the keys are a known error. Prints are more useful error
-message to the screen for troubleshooting. Returns True if error is found, False otherwise. Quits program if invalid user parameters
-raise an 'Access Denied, user authentication required." error.
-** when the API returns 'errors' key, the information is stored in a list  **
-** when the API returns 'error' key, the information is stored in a string **
-"""
-# def has_errors(all_fields:dict, portal_name:str, iD:int, data_path:Path) -> bool:
-def has_errors(all_fields:dict, portal_name:str, iD:int) -> bool:
-    if not isinstance(all_fields, dict):
-        raise TypeError(f"The 'all_fields' parameter in has_errors() should be of type <dict>, passed: {type(all_fields)}")
+def has_errors(response: requests.Response, portal_name: str, iD: int) -> bool:
+    """Comprehensive REST API error handler. Returns True if error found, False if OK."""
+    
+    if not isinstance(response, requests.Response):
+        raise TypeError(f"Expected requests.Response, got {type(response)}")
     if not isinstance(portal_name, str):
-        raise TypeError(f"The 'portal_name' parameter in has_errors() should be of type <str>, passed: {type(portal_name)}")
+        raise TypeError(f"portal_name should be str, got {type(portal_name)}")
     if not isinstance(iD, int):
-        raise TypeError(f"The 'iD' parameter in has_errors() should be of type <int>, passed: {type(iD)}")
-
-    for key in all_fields:
-        if key == 'errors' and all_fields['errors'][0] == 'Access Denied, user authentication required.': 
-            print(all_fields[key][0])
-            print("Check url, email address, and api key.")
-            sys.exit(1)
-        if key == 'error' and all_fields['error'] == 'Internal Server Error':
-            print(f"Instrument {iD} not found -- skipping.")
+        raise TypeError(f"iD should be int, got {type(iD)}")
+    
+    status_code = response.status_code
+    
+    if status_code == 200:
+        # Success - check JSON content for app-level errors
+        try:
+            all_fields = response.json()
+        except requests.exceptions.JSONDecodeError:
+            print(f"{portal_name} #{iD}: Non-JSON response (Status 200)")
             return True
-                
-    return False
+        
+        # App-level errors in JSON body
+        if 'errors' in all_fields and all_fields['errors']:
+            error_msg = all_fields['errors'][0]
+            print(f"{portal_name} #{iD}: API Errors - {error_msg}")
+            
+            if 'Access Denied' in error_msg or 'authentication required' in error_msg:
+                print("Fix: Check email/api_key in URL")
+                sys.exit(1)
+            elif 'Instrument not found' in error_msg:
+                print(f"Skipping {iD} - not found")
+                return True
+            return True
+            
+        if 'error' in all_fields:
+            print(f"{portal_name} #{iD}: {all_fields['error']}")
+            return True
+            
+        return False  # JSON OK
+    
+    elif status_code == 401:
+        print(f"{portal_name} #{iD}: Unauthorized - Invalid API key")
+        sys.exit(1)
+        
+    elif status_code == 403:
+        print(f"{portal_name} #{iD}: Forbidden - No permission for instrument")
+        return True
+        
+    elif status_code == 404:
+        print(f"{portal_name} #{iD}: Not Found - Instrument/ID missing")
+        return True
+        
+    elif status_code == 422:
+        print(f"{portal_name} #{iD}: Unprocessable - Bad date range/params")
+        print(f"   URL: {response.url}")
+        return True
+        
+    elif status_code in (500, 502, 503, 504):
+        print(f"{portal_name} #{iD}: Server Error {status_code} - Try later")
+        return True
+        
+    else:
+        print(f"{portal_name} #{iD}: Unexpected {status_code}")
+        print(f"   Response: {response.text[:200]}...")
+        return True
 
 
 """
