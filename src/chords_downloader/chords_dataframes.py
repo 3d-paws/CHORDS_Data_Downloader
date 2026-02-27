@@ -1,4 +1,5 @@
 import requests
+import warnings
 from json import dumps
 from json import loads
 import numpy as np
@@ -7,10 +8,9 @@ from chords_downloader import resources
 from pathlib import Path
 import argparse
 
-def main(
-        portal_url:str, portal_name:str, instrument_IDs:list[int], user_email:str, api_key:str, start:str, end:str,
-        fill_empty='', include_test:bool=False, columns_desired:list=[], time_window_start:str='', time_window_end:str='' 
-    ) -> list: 
+def main(portal_url:str, portal_name:str, instrument_IDs:list, user_email:str, 
+         api_key:str, start:str, end:str, fill_empty='', include_test:bool=False, 
+         columns_desired:list=[], time_window_start:str='', time_window_end:str='') -> list: 
 
     # user input validation -----------------------------------------------------------------------------------------------------------
     format_str = "%Y-%m-%d %H:%M:%S"
@@ -18,12 +18,14 @@ def main(
     timestamp_end = datetime.strptime(end, format_str)
     if timestamp_start > timestamp_end:
             raise ValueError(f"Starting time cannot be after end time.\n\t\t\tStart: {timestamp_start}\t\tEnd: {timestamp_end}")
-    if timestamp_start < datetime.now() - timedelta(days=365*2):
-        print("\t ========================= WARNING =========================")
-        print(f"\t timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n")
-    if timestamp_end > datetime.now():
-        print("\t ========================= WARNING =========================")
-        print(f"\t timestamp_end in the future: {timestamp_end}\n\t Will pull up to today's date only.\n")
+    if (timestamp_start < datetime.now() - timedelta(days=365*2)):
+            warnings.warn(
+                f"[WARNING]: timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n"
+            )
+    if (timestamp_end > datetime.now()) or (timestamp_start > datetime.now()):
+            warnings.warn(
+                f"[WARNING]: timestamp_start or timestamp_end in the future: {timestamp_start}\t{timestamp_end}\n\t Will pull up to today's date only.\n"
+            )
 
     if time_window_start != "" or time_window_end != "":
         format_str = "%H:%M:%S"
@@ -31,8 +33,6 @@ def main(
         timestamp_window_end = datetime.strptime(time_window_end, format_str).time()
         if time_window_start > time_window_end:
             raise ValueError(f"The start time for the time window is after the end time: {time_window_start} > {time_window_end}")
-        if time_window_start == "" or time_window_end == "":
-            raise ValueError(f"Both the 'time_window_start' and 'time_window_end' variables must be populated to specify a collection timeframe.")
 
     from chords_downloader.resources.functions import PORTAL_LOOKUP
     if portal_name.lower() not in PORTAL_LOOKUP:
@@ -104,9 +104,9 @@ def main(
             print(f"\t Finished writing to file.\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             print(f"\t Total number of measurements: {total_num_measurements}")
         else:
-            print("\t ========================= WARNING =========================")
-            print(f"\t No data found at specified timeframe for {portal_name} Instrument ID {iD}. Skipping.\n")
-
+            warnings.warn(
+                f"[WARNING]: No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n"
+            )
     return dataframes
 
 
