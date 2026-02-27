@@ -29,7 +29,11 @@ the associated CHORDS website.
     - `USER_EMAIL` and `API_KEY`
     - `START`/`END` timestamps
 6. **Run**
-   ```python src/chords_downloader/main.py```
+   ```python src/chords_downloader/main.py```<br>
+   You can execute the script in the IDE or from the CLI with the following command:
+   ```bash
+   chords-download
+   ```
 
 ## Platform-Specific Setup
 #### Windows
