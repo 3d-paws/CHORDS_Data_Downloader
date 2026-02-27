@@ -20,11 +20,11 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
             raise ValueError(f"Starting time cannot be after end time.\n\t\t\tStart: {timestamp_start}\t\tEnd: {timestamp_end}")
     if (timestamp_start < datetime.now() - timedelta(days=365*2)):
             warnings.warn(
-                f"\t[WARNING]: timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n"
+                f"[WARNING]: timestamp_start before CHORDS cutoff (2 years): {timestamp_start}\n\t Will pull 2 year archive only.\n"
             )
     if (timestamp_end > datetime.now()) or (timestamp_start > datetime.now()):
             warnings.warn(
-                f"\t[WARNING]: timestamp_start or timestamp_end in the future: {timestamp_start}\t{timestamp_end}\n\t Will pull up to today's date only.\n"
+                f"[WARNING]: timestamp_start or timestamp_end in the future: {timestamp_start}\t{timestamp_end}\n\t Will pull up to today's date only.\n"
             )
 
     if time_window_start != "" or time_window_end != "":
@@ -73,7 +73,6 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
                 data = all_fields['features'][0]['properties']['data']  # list of dictionaries 
                                                                         # ( e.g. {'time': '2023-12-17T18:45:56Z', 'test': 'false', 'measurements': {'ws': 1.55, 'rain': 1}} )
                 for i in range(len(data)):
-                    # t = resources.get_time(data[i]['time'])
                     time.append(str(data[i]['time']))
                     total_num_measurements += len(data[i]['measurements'].keys())
                     total_num_timestamps += 1
@@ -103,7 +102,7 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
             print(f"\t Total number of measurements: {total_num_measurements}")
         else:
             warnings.warn(
-                f"\t[WARNING]: No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n"
+                f"[WARNING]: No data found at specified timeframe for {portal_name} Instrument ID: {iD}\n"
             )
             file_path = data_path / f"{portal_name}_Instrument-{iD}_[WARNING].txt"
             with open(file_path, 'w') as file:
