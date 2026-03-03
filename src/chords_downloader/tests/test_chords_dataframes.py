@@ -60,7 +60,7 @@ def test_main_warning_when_start_before_two_years(mock_resources, mock_get):
     start    = start_dt.strftime(fmt)
     end      = end_dt.strftime(fmt)
 
-    with pytest.warns(UserWarning, match="timestamp_start before CHORDS cutoff"):
+    with pytest.warns(UserWarning, match="'timestamp_start' before CHORDS cutoff"):
         cd.main(
             portal_url,
             portal_name,
@@ -94,7 +94,7 @@ def test_main_warning_when_start_in_future(mock_resources, mock_get):
     start    = start_dt.strftime(fmt)
     end      = end_dt.strftime(fmt)
 
-    with pytest.warns(UserWarning, match="timestamp_start or timestamp_end in the future"):
+    with pytest.warns(UserWarning, match="'timestamp_start' or 'timestamp_end' in the future"):
         cd.main(
             portal_url,
             portal_name,
@@ -169,6 +169,38 @@ def test_main_raises_when_time_window_start_after_time_window_end():
         )
 
     assert "The start time for the time window is after the end time" in str(excinfo.value)
+
+
+def test_main_raises_when_time_window_incomplete():
+    portal_url     = "https://example.com"
+    portal_name    = "3D-PAWS"
+    data_path      = Path("/tmp")
+    instrument_ids = [1]
+    user_email     = "test@example.com"
+    api_key        = "dummy"
+
+    start_dt = now - timedelta(days=2)
+    end_dt   = now - timedelta(days=1)  
+    start    = start_dt.strftime(fmt)
+    end      = end_dt.strftime(fmt)
+
+    time_window_start = "06:00:00"
+    time_window_end   = "" 
+
+    with pytest.raises(ValueError) as excinfo:
+        cd.main(
+            portal_url,
+            portal_name,
+            instrument_ids,
+            user_email,
+            api_key,
+            start,
+            end,
+            time_window_start=time_window_start,
+            time_window_end=time_window_end
+        )
+
+    assert "Both 'time_window_start' and 'time_window_end' must include a timestamp if using." in str(excinfo.value)
 
 
 def test_main_raises_when_portal_not_found():
