@@ -400,7 +400,14 @@ def df_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.n
         df['time'] = pd.to_datetime(df['time'])
 
         if time_window_start != "" and time_window_end != "":
-            ...
+            print(f"\t\t Time window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
+
+            df['time_of_day'] = df["time"].dt.time
+            time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
+            df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
+            df.drop(columns=['time_of_day'], inplace=True)
+            
+            return df_range
         
         return df
     else:
@@ -443,12 +450,9 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
             print(f"\t\t Time window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
 
             df['time_of_day'] = df["time"].dt.time
-            
             time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
             df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
-
             df.drop(columns=['time_of_day'], inplace=True)
-            
             df_range.to_csv(filepath, index=False)
             
             return
