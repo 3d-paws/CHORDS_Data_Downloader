@@ -10,19 +10,8 @@ the associated CHORDS website.
 ## Quick Start
 1. **Clone/download** this repo
 2. **Open terminal** in project root
-3. **Create & activate virtual environment**<br>
-   PC 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-   macOS/Linux
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
 4. **Install dependencies**<br>
-   ```pip install -r requirements.txt```
+   ```pip install numpy pandas requests pytest```
 5. **Edit `src/chords_downloader/main.py` with your**
     - `PORTAL_NAME` (see list of available portals below)
     - `INSTRUMENT_IDS` (unique ID's from CHORDS portal)
@@ -40,39 +29,6 @@ the associated CHORDS website.
 For Windows, set the execution policy by running the following ONCE as administrator:
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-Create and activate the virtual environment:
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-Install dependencies:
-```powershell
-pip install requests numpy pandas pytest
-```
-Verify installation:
-```powershell
-requests --version
-numpy --version
-pandas --version
-pytest --version
-```
-#### MacOS/Linux
-For macOS/Linux, set up a virtual environment and activate it:
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-Verify installation:
-```bash
-requests --version
-numpy --version
-pandas --version
-pytest --version
 ```
 
 ## Available Portals
@@ -97,8 +53,9 @@ pytest --version
 See Windows-specific setup tips here:<br>
 https://drive.google.com/file/d/1TsTg8LvilrUqBZpj7nq3RsUV5CsSwjB_/view?usp=drive_link
 
-## Dev
-Run the following to test changes:
+## For Contributors
+Run the following to test changes before submitting a pull request:
 ```bash
 pytest -v
 ```
+You must include unit tests for your recommended changes in order for suggestions to be incorporated.
