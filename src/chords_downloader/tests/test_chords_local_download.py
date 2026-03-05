@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from datetime import timedelta, datetime
 from pathlib import Path
+
 from chords_downloader import chords_local_download as cld
 
 now = datetime.now()
@@ -304,3 +305,7 @@ def test_main_warning_when_end_in_future(mock_resources, mock_get):
             start,
             end,
         )
+
+
+def test_successful_long_download():
+    ...
