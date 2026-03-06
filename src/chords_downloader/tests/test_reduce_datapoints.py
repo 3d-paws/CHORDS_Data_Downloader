@@ -86,25 +86,7 @@ def test_reduce_datapoints_long_period(dynamic_timestamps):
     # Set up mock behavior for the following functions
     with patch('chords_downloader.resources.functions.requests.get', side_effect=mock_requests_get) as mock_requests_get, \
         patch('chords_downloader.resources.functions.has_excess_datapoints', side_effect=mock_has_excess_datapoints), \
-        patch('chords_downloader.resources.functions.get_timestamps') as mock_get_timestamps, \
         patch('chords_downloader.resources.functions.write_compass_direction') as mock_write_compass:
-        
-        mock_timestamps_2 = [   # First function call returns two time segments
-            timestamp_start,
-            timestamp_start + timedelta(weeks=51),
-            timestamp_end
-        ]
-        mock_timestamps_4 = [   # Second function call returns four segments
-            timestamp_start,
-            timestamp_start + timedelta(weeks=34),
-            timestamp_start + timedelta(weeks=68),
-            end
-        ]
-
-        # Set parameters for 1st and 2nd function calls to get_timestamps()
-        mock_get_timestamps.side_effect = [
-            mock_timestamps_2, mock_timestamps_4
-        ]
 
         mock_write_compass.return_value = {
             "compass_dir": "N"
@@ -118,13 +100,6 @@ def test_reduce_datapoints_long_period(dynamic_timestamps):
 
         # Logic checks
         assert mock_requests_get.call_count >= 2
-
-        mock_get_timestamps.assert_any_call(
-            timestamp_start, timestamp_end, 2
-        )
-        mock_get_timestamps.assert_any_call(
-            timestamp_start, timestamp_end, 4
-        )
 
         assert len(result) == 4
         time, measurements, test, total_measurements = result

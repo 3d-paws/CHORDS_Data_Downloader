@@ -4,11 +4,12 @@ from json import dumps
 from json import loads
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta, time as dt_time
+from datetime import datetime, timedelta
 import sys
 import math
 from .classes import TimestampError
 from pathlib import Path
+from collections import deque
 
 # Functions -------------------------------------------------------------------------------------------------------------------------
 
@@ -445,6 +446,7 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
         
         df = pd.DataFrame(data, columns=headers)
         df['time'] = pd.to_datetime(df['time'])
+        df = df.sort_values('time').reset_index(drop=True)
 
         if time_window_start != "" and time_window_end != "":
             print(f"\t\t Time window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
@@ -567,58 +569,12 @@ def has_errors(response: requests.Response, portal_name: str, iD: int) -> bool:
 
 
 """
-Helper function for reduce_datapoints() that breaks up large time frames into smaller benchmark timestamps.
-Returns a list of all the timestamps to use in order to shrink data points returned by API.
-"""
-def get_timestamps(start_time:datetime, end_time:datetime, divisions:int) -> list:
-    if not isinstance(start_time, datetime):
-        raise TypeError(f"The 'start_time' parameter in get_timestamps() should be of type <datetime>, passed: {type(start_time)}")
-    if not isinstance(end_time, datetime):
-        raise TypeError(f"The 'end_time' parameter in get_timestamps() should be of type <datetime>, passed: {type(end_time)}")
-    if not isinstance(divisions, int):
-        raise TypeError(f"The 'divisions' parameter in get_timestamps() should be of type <int>, passed: {type(divisions)}")
-    
-    time_delta = math.floor(( (end_time - start_time).total_seconds() / 60 ) / divisions) # in minutes rounded down
-    begin = start_time
-    new_timestamps = []
-    new_timestamps.append(start_time)
-
-    i = 1
-    while i <= divisions:
-        new_timestamp = begin + timedelta(minutes=time_delta)
-        new_timestamps.append(new_timestamp)
-        begin = new_timestamp
-        i += 1
-    
-    if begin != end_time:
-        time_till_end = math.ceil(( (end_time- new_timestamps[len(new_timestamps)-1]).total_seconds() / 60 ) / divisions) # in minutes rounded up
-        if time_till_end < time_delta:
-            new_timestamps.append(end_time)
-        else:
-            print("Timestamp reduction error -- Check API request for incorrect input.")
-            sys.exit(1)
-
-    return new_timestamps
-
-
-"""
-Accepts a timestamp string from the CHORDS API and parses out the timestamp. Returns a datetime object of the parameter.
-    e.g.  '2023-12-17T18:45:56Z'
-"""
-def get_time(timestamp:str) -> datetime:
-    if not isinstance(timestamp, str):
-        raise TypeError(f"The 'timestamp' parameter in get_time() should be of type <str>, passed: {type(timestamp)}")
-    
-    format_str = "%H:%M:%S" 
-    return datetime.strptime(timestamp[11:19], format_str)
-
-"""
 Handles data request error where number of data points exceeds that allowed. Returns a list of new timestamps for which 
 to run the API request to CHORDS s.t. the number of data points requested is less than the max allowed. Returns the 
 lists of data necessary for main() to build csv's.
 """
 def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, timestamp_end:datetime, \
-                                                        portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
+                                    portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
     if not isinstance(error_message, str):
         raise TypeError(f"The 'error_message' parameter in reduce_datapoints() should be of type <str>, passed: {type(error_message)}")
     if not isinstance(iD, int):
@@ -636,46 +592,32 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
 
     print("\t Beginning reduction calculation.")
 
-    time = [] # to avoid a duplicate API cycle in main() -- save time
-    measurements = []
-    test = []
+    queue = deque([(timestamp_start, timestamp_end)])
+    time, measurements, test = [], [], []
     total_num_measurements = 0
+
+    while queue:
+        start_seg, end_seg = queue.popleft()
+        print(f"\t\tGetting segment {start_seg} -> {end_seg}")
+
+        url = f"{portal_url}/api/v1/data/{iD}?start={start_seg}&end={end_seg}&email={user_email}&api_key={api_key}"
+        response = requests.get(url)
+        all_fields = loads(dumps(response.json()))
+
+        if has_excess_datapoints(all_fields):
+            mid = start_seg + (end_seg - start_seg)/2
+            queue.appendleft((start_seg, mid))
+            queue.append((mid, end_seg))
+            continue
+
+        data = all_fields['features'][0]['properties']['data']
+        for dictionary in data:
+            time.append(str(dictionary['time']))
+            test.append(str(dictionary['test']))
+            total_num_measurements += len(dictionary['measurements'].keys())
+            add_wind = write_compass_direction(dict(dictionary['measurements']), fill_empty)
+            measurements.append(add_wind)
     
-    num_divisions = 2
-    new_timestamps = get_timestamps(timestamp_start, timestamp_end, num_divisions)
-    t = new_timestamps[0] # to store progress
-    
-    keep_going = True
-    excess_flag = False 
-    while keep_going:
-        for i in range(len(new_timestamps)-1):
-            if new_timestamps[i] < t and t != new_timestamps[0]: # skip timestamps already shown to pass 
-                continue
-
-            print("\t\t Getting next data segment...")
-            url = f"{portal_url}/api/v1/data/{iD}?start={new_timestamps[i]}&end={new_timestamps[i+1]}&email={user_email}&api_key={api_key}"
-            response = requests.get(url=url)
-            all_fields = loads(dumps(response.json()))
-
-            if has_excess_datapoints(all_fields):
-                t = new_timestamps[i]
-                num_divisions *= 2
-                new_timestamps = get_timestamps(timestamp_start, timestamp_end, num_divisions)
-                excess_flag = True
-                break
-            
-            excess_flag = False
-
-            data = all_fields['features'][0]['properties']['data']
-            for dictionary in data:
-                time.append(str(dictionary['time']))
-                total_num_measurements += len(dictionary['measurements'].keys())
-                to_append = write_compass_direction(dict(dictionary['measurements']), fill_empty)
-                measurements.append(to_append)
-                test.append(str(dictionary['test']))
-            
-        if not excess_flag:
-            keep_going = False    
-        
-    print("\t Finished reduction calculation.")
+    print("\tFinished reduction calculation.")
     return [time, measurements, test, total_num_measurements]
+     
