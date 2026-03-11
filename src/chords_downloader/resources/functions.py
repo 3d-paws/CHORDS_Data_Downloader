@@ -550,8 +550,8 @@ def has_errors(response: requests.Response, portal_name: str, iD: int) -> bool:
         print(f"\t\t{portal_name} #{iD}: Not Found - Instrument/ID missing")
         return True
     
-    elif status_code == 413: # Excess datapoints requested, pass back for reduction
-        return
+    elif status_code == 413: 
+        return              # Excess datapoints requested, pass back for reduction
         
     elif status_code == 422:
         print(f"\t\t{portal_name} #{iD}: Unprocessable - Bad date range/params")
@@ -590,7 +590,7 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
     if not isinstance(api_key, str):
         raise TypeError(f"The 'api_key' parameter in reduce_datapoints() should be of type <str>, passed: {type(api_key)}")
 
-    print("\t Beginning reduction calculation.")
+    print("\tBeginning reduction calculation.")
 
     queue = deque([(timestamp_start, timestamp_end)])
     time, measurements, test = [], [], []
