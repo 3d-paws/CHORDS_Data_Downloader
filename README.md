@@ -18,7 +18,7 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    ```
 3. **Copy and configure .env**<br>
    ```bash
-   cp ./src/chords_downloader/resources/dev/.env_[EXAMPLE] ./src/chords_downloader/.env
+   cp ./src/chords_downloader/resources/dev/.env_[EXAMPLE] .src/chords_downloader/.env
    ```
    See `/src/chords_downloader/resources/dev` for a template.
 4. **Download data**<br>
