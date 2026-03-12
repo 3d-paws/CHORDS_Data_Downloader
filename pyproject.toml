@@ -1,23 +1,103 @@
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "chords_downloader"
+name = "chords-downloader"
 version = "2.0.0"
-description = "Download data from a CHORDS portal using your user account API."
+description = "Download meteorological data from CHORDS portals via REST API"
 readme = "README.md"
-requires-python = ">=3.6"
-license = { text = "MIT" }  # or your actual license
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
 authors = [
   { name = "Rebecca Zieber", email = "rzieber@ucar.edu" }
 ]
-
-dependencies = [
-  "requests==2.32.5",
-  "numpy==1.26.2",
-  "pandas==2.3.2",
+maintainers = [
+  { name = "Rebecca Zieber", email = "rzieber@ucar.edu" }
+]
+keywords = ["chords", "meteorology", "api", "data-download", "csv"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
 ]
 
+dependencies = [
+    "numpy>=1.21.0,<1.25.0",      # RPi 3B compatible
+    "pandas>=1.5.0,<2.2.0",
+    "requests>=2.28.0,<3.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+]
+docs = [
+    "sphinx>=6.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+    "myst-parser>=0.18.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/rzieber/CHORDS_Data_Downloader"
+"Issues" = "https://github.com/rzieber/CHORDS_Data_Downloader/issues"
+"Source" = "https://github.com/rzieber/CHORDS_Data_Downloader"
+"Changelog" = "https://github.com/rzieber/CHORDS_Data_Downloader/releases"
+
 [project.scripts]
-chords-download = "chords_downloader.main:main"
+"chords-download" = "chords_downloader.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "numpy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pandas.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+markers = [
+    "slow: marks tests as slow",
+    "serial: marks tests as serially dependent",
+]
