@@ -20,7 +20,7 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    ```bash
    cp .env.example .env
    ```
-   See `/src/chords_downloader/resources/dev for a template.
+   See `/src/chords_downloader/resources/dev` for a template.
 4. **Download data**<br>
    ```bash
    chords-download
