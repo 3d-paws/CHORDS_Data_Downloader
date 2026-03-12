@@ -28,7 +28,7 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    CSV's save to your `DATA_PATH` automatically.
 
 ## Configuration
-#### chords_local_download.py
+### chords_local_download.py
 Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
@@ -38,7 +38,7 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `API_KEY` - the API associated with your CHORDS account
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
-#### chords_dataframes.py
+### chords_dataframes.py
 Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
@@ -67,19 +67,19 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
 - `Somalia`            | `http:\\3d-somalia.icdp.ucar.edu`
 
 ## Platform Setup
-#### Raspberry Pi 3B/4/5
+### Raspberry Pi 3B/4/5
 Enable fast ARM wheels (numpy won't freeze) BEFORE creating a virtual environment
 ```bash
 echo "[global]" | sudo tee /etc/pip.conf
 echo "extra-index-url=https://www.piwheels.org/simple" | sudo tee -a /etc/pip.conf
 pip install -r requirements.txt
 ```
-#### Windows
+### Windows
 One-time (run as admin)
 ```bash
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
-#### macOS/Linux
+### macOS/Linux
 ```bash
 pip install -r requirements.txt
 ```
