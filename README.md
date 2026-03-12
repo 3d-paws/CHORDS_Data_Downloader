@@ -1,5 +1,5 @@
 # CHORDS Data Downloader
-This Python script automates downloading data from CHORDS portals via API. Supports CSV export `chords_local_download.py` or Pandas DataFrames `chords_dataframes.py`.<br>
+This Python script automates downloading data from CHORDS portals via REST API. Supports CSV export `chords_local_download.py` or Pandas DataFrames `chords_dataframes.py`.<br>
 NOTE: Columns are named by their shortname. To see the full sensor name, reference 
 the associated CHORDS website.
 
