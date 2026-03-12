@@ -1,35 +1,52 @@
 # CHORDS Data Downloader
-This Python script automates downloading data from CHORDS portals via REST API. Supports CSV export `chords_local_download.py` or Pandas DataFrames `chords_dataframes.py`.<br>
-NOTE: Columns are named by their shortname. To see the full sensor name, reference 
-the associated CHORDS website.
+Automated REST API client for downloading CHORDS meteorological data. Supports CSV export `chords_local_download.py`, dataframe export `chords_dataframes.py`, column filtering, time windows, and all major CHORDS portals.<br><br>
+Authored by Rebecca Zieber.<br><br>
+NOTE: Columns are named by their shortname. To see the full sensor name, reference the associated CHORDS website.
 
 ## Prerequisites
 - Python **3.8+** 
 - CHORDS account with **API key** and download privileges
 
 ## Quick Start
-1. **Clone/download** this repo
-2. **Open terminal** in project root
-4. **Install dependencies**<br>
-   ```pip install numpy pandas requests pytest```
-5. **Edit `src/chords_downloader/main.py` with your**
-    - `PORTAL_NAME` (see list of available portals below)
-    - `INSTRUMENT_IDS` (unique ID's from CHORDS portal)
-    - `USER_EMAIL` and `API_KEY`
-    - `START`/`END` timestamps
-6. **Run**
-   ```python src/chords_downloader/main.py```<br>
-   You can execute the script in the IDE or from the CLI with the following command:
+1. **Clone/download** this repo<br>
+   ```bash
+   git clone https://github.com/rzieber/CHORDS_Data_Downloader.git
+   ```
+2. **Install dependencies**<br>
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Copy and configure .env**<br>
+   ```bash
+   cp .env.example .env
+   ```
+   See `/src/chords_downloader/resources/dev for a template.
+4. **Download data**<br>
    ```bash
    chords-download
    ```
+   CSV's save to your `DATA_PATH` automatically.
 
-## Platform-Specific Setup
-#### Windows
-For Windows, set the execution policy by running the following ONCE as administrator:
-```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
+## Configuration
+#### chords_local_download.py
+Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
+   - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
+   - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
+   - `DATA_PATH` - the path where CSV's are to be exported to your local machine
+   - `INSTRUMENT_IDS` - the list of instrument id's (see available instruments on your CHORDS portal) -> comma separated integers
+   - `USER_EMAIL` - the email associated with your CHORDS account
+   - `API_KEY` - the API associated with your CHORDS account
+   - `START` - the start of your desired data period
+   - `END` -  the end of your desired data period
+#### chords_dataframes.py
+Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
+   - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
+   - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
+   - `INSTRUMENT_IDS` - the list of instrument id's (see available instruments on your CHORDS portal)
+   - `USER_EMAIL` - the email associated with your CHORDS account
+   - `API_KEY` - the API associated with your CHORDS account
+   - `START` - the start of your desired data period
+   - `END` -  the end of your desired data period
 
 ## Available Portals
 - `3D-PAWS`            | `https:\\3d.chordsrt.com`
@@ -48,6 +65,33 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 - `Jamaica`            | `http:\\3d-jamaica.icdp.ucar.edu`
 - `Ethiopia`           | `http:\\3d-ethiopia.icdp.ucar.edu`
 - `Somalia`            | `http:\\3d-somalia.icdp.ucar.edu`
+
+## Platform Setup
+#### Raspberry Pi 3B/4/5
+Enable fast ARM wheels (numpy won't freeze) BEFORE creating a virtual environment
+```bash
+echo "[global]" | sudo tee /etc/pip.conf
+echo "extra-index-url=https://www.piwheels.org/simple" | sudo tee -a /etc/pip.conf
+pip install -r requirements.txt
+```
+#### Windows
+One-time (run as admin)
+```bash
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+#### macOS/Linux
+```bash
+pip install -r requirements.txt
+```
+
+## Dependencies
+```
+numpy>=1.21.0,<1.25.0 
+pandas>=1.5.0,<2.2.0
+pytest>=7.0.0
+python-dotenv>=1.0.0
+requests>=2.28.0
+```
 
 ## Troubleshooting
 See Windows-specific setup tips here:<br>
