@@ -12,16 +12,22 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    ```bash
    git clone https://github.com/rzieber/CHORDS_Data_Downloader.git
    ```
-2. **Install dependencies**<br>
+2. **Set up virtual environment**<br>
+   ```bash
+   pip install python3-venv
+   python3 -m venv .venv
+   source .venv/bin.activate
+   ```
+3. **Install dependencies**<br>
    ```bash
    pip install -r requirements.txt
    ```
-3. **Copy and configure .env**<br>
+4. **Copy and configure .env**<br>
    ```bash
    cp ./src/chords_downloader/resources/dev/.env_[EXAMPLE] .src/chords_downloader/.env
    ```
    See `/src/chords_downloader/resources/dev` for a template.
-4. **Download data**<br>
+5. **Download data**<br>
    ```bash
    chords-download
    ```
@@ -72,15 +78,28 @@ Enable fast ARM wheels (numpy won't freeze) BEFORE creating a virtual environmen
 ```bash
 echo "[global]" | sudo tee /etc/pip.conf
 echo "extra-index-url=https://www.piwheels.org/simple" | sudo tee -a /etc/pip.conf
-pip install -r requirements.txt
+```
+Then create the virtual environment
+```bash
+sudo apt update
+sudo apt install python3-venv python3-pip
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 ### Windows
 One-time (run as admin)
 ```bash
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
+Then set up the virtual environment
+```bash
+python3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 ### macOS/Linux
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
