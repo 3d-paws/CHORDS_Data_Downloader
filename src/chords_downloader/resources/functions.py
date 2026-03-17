@@ -4,12 +4,11 @@ from json import dumps
 from json import loads
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 import sys
-import math
-from .classes import TimestampError
 from pathlib import Path
 from collections import deque
+from typing import Union, Optional, List
 
 # Functions -------------------------------------------------------------------------------------------------------------------------
 
@@ -76,7 +75,7 @@ def write_compass_direction(dictionary:dict, fill_empty) -> dict:
 """
 Reads available CHORDS portals from portals.txt and exports as a list.
 """
-def load_portals(path: str | Path | None = None) -> list[str]:
+def load_portals(path: Optional[Union[str, Path]] = None) -> List[str]:
     if path is None:
         path = Path(__file__).with_name("portals.txt")
     else:
@@ -388,31 +387,32 @@ def df_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.n
     if not isinstance(include_test, bool):
         raise TypeError(f"The 'include_test' parameter in df_builder() should be of type <bool>, passed: {type(include_test)}")
 
-    if len(time) == len(measurements):
-        data = [] # list of timestamps, measurements, test val's, and headers (to turn into dataframe)
-        for i in range(len(time)):
-            measurements[i].update({'time':time[i]}) 
-            if include_test and len(test) == len(time):
-                measurements[i].update({'test':test[i]})
-            measurement_dict = {header: measurements[i].get(header, fill_empty) for header in headers} # fill in null value for var's with no data
-            data.append(measurement_dict)
+    time_list         = [str(t).replace('T', ' ').replace('Z','') for t in time]
+    test_list         = test.tolist()
+    measurements_list = [dict(row) for row in measurements]
+    
+    df_data = []
+    for i, t in enumerate(time_list):
+        row_dict = {'time':t}
+        row_dict.update(measurements_list[i])
+        if include_test:
+            row_dict['test'] = test_list[i]
+        df_data.append(row_dict)
+
+    df = pd.DataFrame(df_data)
+    df = df[headers]
+    
+    if time_window_start  != '' and time_window_end != '':
+        print(f"\t\tTime window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
         
-        df = pd.DataFrame(data, columns=headers)
-        df['time'] = pd.to_datetime(df['time'])
-
-        if time_window_start != "" and time_window_end != "":
-            print(f"\t\t Time window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
-
-            df['time_of_day'] = df["time"].dt.time
-            time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
-            df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
-            df.drop(columns=['time_of_day'], inplace=True)
+        df['time_of_day'] = df["time"].dt.time
+        time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
+        df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
+        df.drop(columns=['time_of_day'], inplace=True)
             
-            return df_range
-        
-        return df
-    else:
-        raise TimestampError()
+        return df_range
+    
+    return df
     
 
 """
@@ -435,34 +435,34 @@ def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.
     if not isinstance(include_test, bool):
         raise TypeError(f"The 'include_test' parameter in csv_builder() should be of type <bool>, passed: {type(include_test)}")
 
-    if len(time) == len(measurements):
-        data = [] # list of timestamps, measurements, test val's, and headers (to turn into dataframe)
-        for i in range(len(time)):
-            measurements[i].update({'time':time[i]}) 
-            if include_test and len(test) == len(time):
-                measurements[i].update({'test':test[i]})
-            measurement_dict = {header: measurements[i].get(header, fill_empty) for header in headers} # fill in null value for var's with no data
-            data.append(measurement_dict)
-        
-        df = pd.DataFrame(data, columns=headers)
-        df['time'] = pd.to_datetime(df['time'])
-        df = df.sort_values('time').reset_index(drop=True)
-
-        if time_window_start != "" and time_window_end != "":
-            print(f"\t\t Time window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
-
-            df['time_of_day'] = df["time"].dt.time
-            time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
-            df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
-            df.drop(columns=['time_of_day'], inplace=True)
-            df_range.to_csv(filepath, index=False)
-            
-            return
-
-        df.to_csv(filepath, index=False)
+    time_list         = [str(t).replace('T', ' ').replace('Z','') for t in time]
+    test_list         = test.tolist()
+    measurements_list = [dict(row) for row in measurements]
     
-    else:
-        raise TimestampError()
+    df_data = []
+    for i, t in enumerate(time_list):
+        row_dict = {'time':t}
+        row_dict.update(measurements_list[i])
+        if include_test:
+            row_dict['test'] = test_list[i]
+        df_data.append(row_dict)
+
+    df = pd.DataFrame(df_data)
+    df = df[headers]
+    
+    if time_window_start != '' and time_window_end != '':
+        print(f"\t\tTime window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
+        
+        df['time_of_day'] = df["time"].dt.time
+        time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
+        df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
+        df.drop(columns=['time_of_day'], inplace=True)
+            
+        df_range.to_csv(filepath, index=False, encoding='utf-8')
+        return
+    
+    df.to_csv(filepath, index=False, encoding='utf-8')
+    
 
 """
 Accepts a dictionary containing the result of the API data download from CHORDS and checks whether it was successful.

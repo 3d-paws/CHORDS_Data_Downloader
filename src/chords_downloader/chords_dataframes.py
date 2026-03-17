@@ -7,8 +7,9 @@ from datetime import datetime, timedelta
 from chords_downloader import resources
 from pathlib import Path
 import argparse
+from typing import List, Tuple
 
-def main(portal_url:str, portal_name:str, instrument_IDs:list, user_email:str, 
+def main(portal_url:str, portal_name:str, instrument_IDs:List, user_email:str, 
          api_key:str, start:str, end:str, fill_empty='', include_test:bool=False, 
          columns_desired:list=[], time_window_start:str='', time_window_end:str='') -> list: 
 
@@ -107,14 +108,14 @@ def main(portal_url:str, portal_name:str, instrument_IDs:list, user_email:str,
     return dataframes
 
 
-def parse_args() -> tuple[str, str, Path, list[int], str, str, str, str]:
+def parse_args() -> Tuple[str, str, Path, List[int], str, str, str, str]:
     parser = argparse.ArgumentParser(
         description="Process API user parameters: portal_url, portal_name, instrument_IDs, user_email, api_key, start, and end."
     )
 
     parser.add_argument("portal_url",           type=str,   help="The url for the CHORDS online portal.")
     parser.add_argument("portal_name",          type=str,   help="The name of the CHORDS portal.")
-    parser.add_argument("instrument_IDs",       type=Path,  help="All the instruments to download data from. Use the Instrument Id from CHORDS portal.")
+    parser.add_argument("instrument_IDs",       type=List,  help="All the instruments to download data from. Use the Instrument Id from CHORDS portal.")
     parser.add_argument("user_email",           type=str,   help="The email login information in order to access the CHORDS online portal.")
     parser.add_argument("api_key",              type=str,   help="The API key which corresponds to the user's email address.")
     parser.add_argument("start",                type=str,   help="The timestamp from which to start downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")

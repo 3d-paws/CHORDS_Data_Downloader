@@ -4,7 +4,7 @@ Authored by Rebecca Zieber.<br><br>
 NOTE: Columns are named by their shortname. To see the full sensor name, reference the associated CHORDS website.
 
 ## Prerequisites
-- Python **3.8+** 
+- Python **3.7+** 
 - CHORDS account with **API key** and download privileges
 
 ## Quick Start
@@ -74,27 +74,41 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
 
 ## Platform Setup
 ### Raspberry Pi 3B/4/5
-Enable fast ARM wheels (numpy won't freeze) BEFORE creating a virtual environment
+Perform the following from the project root.<br>
+Update the system. Install pip and Python virtual environment.
+```bash
+sudo apt update
+sudo apt install python3-pip python3-venv
+```
+Enable pinwheels for faster dependency installation.
 ```bash
 echo "[global]" | sudo tee /etc/pip.conf
 echo "extra-index-url=https://www.piwheels.org/simple" | sudo tee -a /etc/pip.conf
 ```
-Then create the virtual environment
+Create the virtual environment and activate it.
 ```bash
-sudo apt update
-sudo apt install python3-venv python3-pip
 python3 -m venv .venv
 source .venv/bin/activate
 ```
+Finally, install library dependencies and configure script for execution via the command line.
+```bash
+pip install -r requirements.txt
+pip install --update pip setuptools wheel
+pip install -e .
+```
 ### Windows
-One-time (run as admin)
+One-time (run as admin).
 ```bash
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
-Then set up the virtual environment
+Then set up the virtual environment.
 ```bash
 python3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
+Install the library dependencies.
+```bash
+pip install -r requirements.txt
 ```
 ### macOS/Linux
 ```bash
@@ -104,12 +118,13 @@ pip install -r requirements.txt
 ```
 
 ## Dependencies
+For compatibility with Python 3.7
 ```
-numpy>=1.21.0,<1.25.0 
-pandas>=1.5.0,<2.2.0
-pytest>=7.0.0
-python-dotenv>=1.0.0
-requests>=2.28.0
+numpy>=1.21.0,<1.25.0
+pandas==1.3.5
+pytest==7.4.3
+python-dotenv==0.21.1
+requests==2.31.0
 ```
 
 ## Troubleshooting
