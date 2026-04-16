@@ -5,7 +5,7 @@ Authored by Rebecca Zieber
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from chords_downloader import chords_local_download, chords_dataframes
+from chords_downloader import chords_downloader
 
 load_dotenv()
 
@@ -29,9 +29,10 @@ user_email         = os.getenv("USER_EMAIL")
 api_key            = os.getenv("API_KEY") 
 start              = os.getenv("START") 
 end                = os.getenv("END")
+output             = os.getenv("OUTPUT")
 
 # Optional user parameters -----------------------------------------------
-fill_empty         = os.getenv("FILL_EMPTY", "")
+# fill_empty         = os.getenv("FILL_EMPTY", "")  # NOTE: 04-16-2026 Removed bc not used
 include_test       = os.getenv("INCLUDE_TEST", "False").lower() == "true"
 
 columns_desired_str = os.getenv("COLUMNS_DESIRED", "[]")
@@ -50,12 +51,8 @@ if not all(required):
     raise ValueError(f"Missing required environment variables: {missing}.\nCheck your .env file.")
 
 def main():
-    # To download csv's locally to your machine (most common):
-    chords_local_download.main(portal_url, portal_name, data_path, instrument_ids,
-                                                    user_email, api_key, start, end)
-    # To export pandas dataframes
-    # chords_dataframes.main(PORTAL_URL, PORTAL_NAME, INSTRUMENT_IDS, 
-    #                        USER_EMAIL, API_KEY, START, END)
+    chords_downloader.main(portal_url, portal_name, data_path, instrument_ids,
+                                user_email, api_key, start, end, output)
 
 
 if __name__ == '__main__':

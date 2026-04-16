@@ -59,7 +59,7 @@ docs = [
 "Changelog" = "https://github.com/rzieber/CHORDS_Data_Downloader/releases"
 
 [project.scripts]
-"chords-download" = "chords_downloader.main:main"
+"chords-download" = "chords_downloader.main:cli"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import List, Tuple
 
 def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, user_email:str, 
-         api_key:str, start:str, end:str, fill_empty='', include_test:bool=False, columns_desired:list=[], 
-         time_window_start:str='', time_window_end:str=''):
+         api_key:str, start:str, end:str, fill_empty='', include_test:bool=False, columns_desired:list=None, 
+         time_window_start:str='', time_window_end:str='', output:str="csv"):
  
     # User input validation -----------------------------------------------------------------------------------------------------------
     format_str = "%Y-%m-%d %H:%M:%S"
@@ -42,7 +42,16 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
     if portal_name.lower() not in PORTAL_LOOKUP:
         raise ValueError(f"{portal_name} not found. Supported CHORDS portals include:\n{PORTAL_LOOKUP}")
     
+    if columns_desired is None:
+        columns_desired=[]
+
+    output = output.lower()
+    if output not in {"csv", "df", "both"}:
+        raise ValueError("output must be one of {'csv', 'df', 'both'}")
+    
     # Processing loop ------------------------------------------------------------------------------------------------------------------
+    results = {}
+
     for iD in instrument_IDs:
         if not isinstance(iD, int):
             raise TypeError(f"The instrument id's must be integers, passed {type(iD)} for id {iD}.")
@@ -64,7 +73,7 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
 
         if resources.has_excess_datapoints(all_fields): # reduce timeframe in API call
-            print("\t Large data request -- reducing.")
+            print("\tLarge data request -- reducing.")
             reduced_data = resources.reduce_datapoints(all_fields['errors'][0], int(iD), timestamp_start, timestamp_end, \
                                                 portal_url, user_email, api_key, fill_empty)    # list
                                                 # e.g. [time, measurements, test, total_num_measurements]
@@ -90,12 +99,27 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         test_array          = np.array(test)
         
         if resources.struct_has_data(measurements_array, time_array, test_array): 
+            df = resources.build_dataframe(
+                headers, time_array, measurements_array, test_array, include_test, 
+                timestamp_window_start, timestamp_window_end
+            ) # NOTE: 04/16/2026 -- removed fill_empty because it isn't currently used in build_dataframes()
+            
             file_path = data_path / f"{portal_name}_Instrument-{iD}_{timestamp_start.date()}_{timestamp_end.date()}.csv"
-            resources.csv_builder(
-                headers, time_array, measurements_array, test_array, file_path, 
-                include_test, fill_empty, timestamp_window_start, timestamp_window_end
-            )
-            print(f"\t Finished writing to file.\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            if output  == "csv":
+                resources.write_dataframe_csv(df, file_path)
+                print(f"\t Finished writing CSV.\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            elif output == "df": 
+                print(f"\t Finished building DataFrame.\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            else:        # both
+                resources.write_dataframe_csv(df, file_path)
+                print(f"\t Finished building DataFrame and writing CSV.\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            
+            results[iD] = {
+                "dataframe":        df if output in ["df","both"] else None,
+                "csv_path":         file_path if output in ["csv","both"] else None,
+                "num_measurements": total_num_measurements
+            }
+
             print(f"\t Total number of measurements: {total_num_measurements}")
         else:
             warnings.warn(
@@ -104,6 +128,8 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
             file_path = data_path / f"{portal_name}_Instrument-{iD}_[WARNING].txt"
             with open(file_path, 'w') as file:
                 file.write("No data was found for the specified time frame.\nCheck the CHORDS portal to verify.")
+    
+    return results
 
 
 def parse_args() -> Tuple[str, str, Path, List[int], str, str, str, str]:
@@ -119,11 +145,12 @@ def parse_args() -> Tuple[str, str, Path, List[int], str, str, str, str]:
     parser.add_argument("api_key",              type=str,   help="The API key which corresponds to the user's email address.")
     parser.add_argument("start",                type=str,   help="The timestamp from which to start downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
     parser.add_argument("end",                  type=str,   help="The timestamp at which to stop downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
-    parser.add_argument("-fill_empty",                      help="Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).")
+    # parser.add_argument("-fill_empty",                      help="Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).")
     parser.add_argument("-include_test",        type=bool,  help="Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default). ")
     parser.add_argument("-columns_desired",     type=list,  help="Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.")
     parser.add_argument("-time_window_start",   type=str,   help="Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.")
     parser.add_argument("-time_window_end",     type=str,   help="Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.")
+    parser.add_argument("--output",             choices=["csv", "df", "both"], default="csv", help="Return pandas DataFrames, write CSVs, or both.")
 
     args = parser.parse_args()
     return (
@@ -131,17 +158,22 @@ def parse_args() -> Tuple[str, str, Path, List[int], str, str, str, str]:
         args.portal_name, 
         args.data_path,
         args.instrument_IDs, 
-        args.user_email, 
+        args.user_email,
         args.api_key, 
         args.start, 
         args.end, 
-        args.fill_empty, 
+        # args.fill_empty, 
         args.include_test,
         args.columns_desired,
         args.time_window_start,
-        args.time_window_end
+        args.time_window_end,
+        args.output
     )
 
 
+def cli():
+    args = parse_args()
+    main(*args)
+
 if __name__ == "__main__":
-    main(*parse_args())
+    cli()
