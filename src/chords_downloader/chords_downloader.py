@@ -107,12 +107,12 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
             file_path = data_path / f"{portal_name}_Instrument-{iD}_{timestamp_start.date()}_{timestamp_end.date()}.csv"
             if output  == "csv":
                 resources.write_dataframe_csv(df, file_path)
-                print(f"\t Finished writing CSV.\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"\tFinished writing CSV.\t\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             elif output == "df": 
-                print(f"\t Finished building DataFrame.\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"\tFinished building DataFrame.\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             else:        # both
                 resources.write_dataframe_csv(df, file_path)
-                print(f"\t Finished building DataFrame and writing CSV.\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"\tFinished building DataFrame and writing CSV.\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             
             results[iD] = {
                 "dataframe":        df if output in ["df","both"] else None,
@@ -120,7 +120,7 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
                 "num_measurements": total_num_measurements
             }
 
-            print(f"\t Total number of measurements: {total_num_measurements}")
+            print(f"\tTotal number of measurements: {total_num_measurements}")
         else:
             warnings.warn(
                 f"No data found at specified timeframe for {portal_name} Instrument ID: {iD}"
