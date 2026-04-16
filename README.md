@@ -60,7 +60,7 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
 - `Bahamas`            | `http:\\3d-bahamas.icdp.ucar.edu`
 - `Malawi`             | `http:\\3d-malawi.icdp.ucar.edu`
 - `Jamaica`            | `http:\\3d-jamaica.icdp.ucar.edu`
-- `Ethiopia`           | `http:\\3d-ethiopia.icdp.ucar.edu`
+- `Ethiopia`           | `https:\\3d-ethiopia.icdp.ucar.edu`
 - `Somalia`            | `http:\\3d-somalia.icdp.ucar.edu`
 
 ## Platform Setup
