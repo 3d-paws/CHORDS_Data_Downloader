@@ -1,5 +1,5 @@
 # CHORDS Data Downloader
-Automated REST API client for downloading CHORDS meteorological data. Supports CSV export `chords_local_download.py`, dataframe export `chords_dataframes.py`, column filtering, time windows, and all major CHORDS portals.<br><br>
+Automated REST API client for downloading CHORDS meteorological data. Supports CSV export, dataframe export, column filtering, time windows, and all major CHORDS portals.<br><br>
 Authored by Rebecca Zieber.<br><br>
 NOTE: Columns are named by their shortname. To see the full sensor name, reference the associated CHORDS website.
 
@@ -26,7 +26,7 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    ```bash
    cp ./src/chords_downloader/resources/dev/.env_[EXAMPLE] .src/chords_downloader/.env
    ```
-   See `/src/chords_downloader/resources/dev` for a template.
+   See `/src/chords_downloader/resources/dev` for the template: `.env_[EXAMPLE]`.
 5. **Download data**<br>
    ```bash
    chords-download
@@ -34,7 +34,7 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    CSV's save to your `DATA_PATH` automatically.
 
 ## Configuration
-### chords_local_download.py
+### chords_downloader.py
 Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
@@ -44,6 +44,7 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `API_KEY` - the API associated with your CHORDS account
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
+   - `OUTPUT` - the type of output you desire; valid selections are: csv, df, or both
 ### chords_dataframes.py
 Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
