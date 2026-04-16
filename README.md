@@ -92,7 +92,7 @@ source .venv/bin/activate
 ```
 Finally, install library dependencies and configure script for execution via the command line.
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt --prefer-binary
 pip install --update pip setuptools wheel
 pip install -e .
 ```
