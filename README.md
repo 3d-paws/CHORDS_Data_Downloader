@@ -34,7 +34,6 @@ NOTE: Columns are named by their shortname. To see the full sensor name, referen
    CSV's save to your `DATA_PATH` automatically.
 
 ## Configuration
-### chords_downloader.py
 Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
@@ -45,15 +44,6 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
    - `OUTPUT` - the type of output you desire, valid selections are: csv, df, or both -> string values
-### chords_dataframes.py
-Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
-   - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
-   - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
-   - `INSTRUMENT_IDS` - the list of instrument id's (see available instruments on your CHORDS portal)
-   - `USER_EMAIL` - the email associated with your CHORDS account
-   - `API_KEY` - the API associated with your CHORDS account
-   - `START` - the start of your desired data period
-   - `END` -  the end of your desired data period
 
 ## Available Portals
 - `3D-PAWS`            | `https:\\3d.chordsrt.com`
