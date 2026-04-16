@@ -374,45 +374,82 @@ Accepts an array of headers, timestamps, and of dictionaries containing sensor m
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Returns a dataframe.
 """
-def df_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, include_test:bool, 
-               fill_empty, time_window_start, time_window_end):     
+def build_dataframe(headers: list, time: np.ndarray, measurements: np.ndarray, test: np.ndarray,
+                    include_test: bool, time_window_start='', time_window_end='') -> pd.DataFrame:
     if not isinstance(headers, list):
-        raise TypeError(f"The 'headers' parameter in df_builder() should be of type <list>, passed: {type(headers)}")
+        raise TypeError(f"'headers' must be list, got {type(headers)}")
     if not isinstance(time, np.ndarray):
-        raise TypeError(f"The 'time' parameter in df_builder() should be of type <ndarray>, passed: {type(time)}")
+        raise TypeError(f"'time' must be np.ndarray, got {type(time)}")
     if not isinstance(measurements, np.ndarray):
-        raise TypeError(f"The 'measurements' parameter in df_builder() should be of type <ndarray>, passed: {type(measurements)}")
+        raise TypeError(f"'measurements' must be np.ndarray, got {type(measurements)}")
     if not isinstance(test, np.ndarray):
-        raise TypeError(f"The 'test' parameter in df_builder() should be of type <ndarray>, passed: {type(test)}")
+        raise TypeError(f"'test' must be np.ndarray, got {type(test)}")
     if not isinstance(include_test, bool):
-        raise TypeError(f"The 'include_test' parameter in df_builder() should be of type <bool>, passed: {type(include_test)}")
+        raise TypeError(f"'include_test' must be bool, got {type(include_test)}")
 
-    time_list         = [str(t).replace('T', ' ').replace('Z','') for t in time]
-    test_list         = test.tolist()
-    measurements_list = [dict(row) for row in measurements]
-    
-    df_data = []
-    for i, t in enumerate(time_list):
-        row_dict = {'time':t}
-        row_dict.update(measurements_list[i])
+    rows = []
+    for i, t in enumerate(time.tolist()):
+        row = {"time": str(t).replace("T", " ").replace("Z", "")}
+        row.update(dict(measurements[i]))
         if include_test:
-            row_dict['test'] = test_list[i]
-        df_data.append(row_dict)
+            row["test"] = test.tolist()[i]
+        rows.append(row)
 
-    df = pd.DataFrame(df_data)
-    df = df[headers]
-    
-    if time_window_start  != '' and time_window_end != '':
-        print(f"\t\tTime window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
-        
-        df['time_of_day'] = df["time"].dt.time
-        time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
-        df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
-        df.drop(columns=['time_of_day'], inplace=True)
-            
-        return df_range
-    
+    df = pd.DataFrame(rows)
+
+    if len(headers) > 0:
+        df = df[headers]
+
+    df["time"] = pd.to_datetime(df["time"], errors="coerce")
+    df = df.dropna(subset=["time"]).sort_values("time").reset_index(drop=True)
+
+    if time_window_start != '' and time_window_end != '':
+        df = df.loc[
+            (df["time"].dt.time >= time_window_start) &
+            (df["time"].dt.time <= time_window_end)
+        ].reset_index(drop=True)
+
     return df
+
+# def df_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, include_test:bool, 
+#                fill_empty, time_window_start, time_window_end):     
+#     if not isinstance(headers, list):
+#         raise TypeError(f"The 'headers' parameter in df_builder() should be of type <list>, passed: {type(headers)}")
+#     if not isinstance(time, np.ndarray):
+#         raise TypeError(f"The 'time' parameter in df_builder() should be of type <ndarray>, passed: {type(time)}")
+#     if not isinstance(measurements, np.ndarray):
+#         raise TypeError(f"The 'measurements' parameter in df_builder() should be of type <ndarray>, passed: {type(measurements)}")
+#     if not isinstance(test, np.ndarray):
+#         raise TypeError(f"The 'test' parameter in df_builder() should be of type <ndarray>, passed: {type(test)}")
+#     if not isinstance(include_test, bool):
+#         raise TypeError(f"The 'include_test' parameter in df_builder() should be of type <bool>, passed: {type(include_test)}")
+
+#     time_list         = [str(t).replace('T', ' ').replace('Z','') for t in time]
+#     test_list         = test.tolist()
+#     measurements_list = [dict(row) for row in measurements]
+    
+#     df_data = []
+#     for i, t in enumerate(time_list):
+#         row_dict = {'time':t}
+#         row_dict.update(measurements_list[i])
+#         if include_test:
+#             row_dict['test'] = test_list[i]
+#         df_data.append(row_dict)
+
+#     df = pd.DataFrame(df_data)
+#     df = df[headers]
+    
+#     if time_window_start  != '' and time_window_end != '':
+#         print(f"\t\tTime window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
+        
+#         df['time_of_day'] = df["time"].dt.time
+#         time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
+#         df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
+#         df.drop(columns=['time_of_day'], inplace=True)
+            
+#         return df_range
+    
+#     return df
     
 
 """
@@ -420,48 +457,56 @@ Accepts an array of headers, timestamps, and of dictionaries containing sensor m
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Accepts a string of the filepath at which to create the csv file and creates the csv there.
 """
-def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:Path, include_test:bool, 
-                fill_empty, time_window_start, time_window_end): 
-    if not isinstance(headers, list):
-        raise TypeError(f"The 'headers' parameter in csv_builder() should be of type <list>, passed: {type(headers)}")
-    if not isinstance(time, np.ndarray):
-        raise TypeError(f"The 'time' parameter in csv_builder() should be of type <ndarray>, passed: {type(time)}")
-    if not isinstance(measurements, np.ndarray):
-        raise TypeError(f"The 'measurements' parameter in csv_builder() should be of type <ndarray>, passed: {type(measurements)}")
-    if not isinstance(test, np.ndarray):
-        raise TypeError(f"The 'test' parameter in csv_builder() should be of type <ndarray>, passed: {type(test)}")
+def write_dataframe_csv(df: pd.DataFrame, filepath: Path) -> None:
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError(f"'df' must be pd.DataFrame, got {type(df)}")
     if not isinstance(filepath, Path):
-        raise TypeError(f"The 'filepath' parameter in csv_builder() should be of type <Path>, passed: {type(filepath)}")
-    if not isinstance(include_test, bool):
-        raise TypeError(f"The 'include_test' parameter in csv_builder() should be of type <bool>, passed: {type(include_test)}")
+        raise TypeError(f"'filepath' must be Path, got {type(filepath)}")
 
-    time_list         = [str(t).replace('T', ' ').replace('Z','') for t in time]
-    test_list         = test.tolist()
-    measurements_list = [dict(row) for row in measurements]
-    
-    df_data = []
-    for i, t in enumerate(time_list):
-        row_dict = {'time':t}
-        row_dict.update(measurements_list[i])
-        if include_test:
-            row_dict['test'] = test_list[i]
-        df_data.append(row_dict)
+    df.to_csv(filepath, index=False, encoding="utf-8")
 
-    df = pd.DataFrame(df_data)
-    df = df[headers]
+# def csv_builder(headers:list, time:np.ndarray, measurements:np.ndarray, test:np.ndarray, filepath:Path, include_test:bool, 
+#                 fill_empty, time_window_start, time_window_end): 
+#     if not isinstance(headers, list):
+#         raise TypeError(f"The 'headers' parameter in csv_builder() should be of type <list>, passed: {type(headers)}")
+#     if not isinstance(time, np.ndarray):
+#         raise TypeError(f"The 'time' parameter in csv_builder() should be of type <ndarray>, passed: {type(time)}")
+#     if not isinstance(measurements, np.ndarray):
+#         raise TypeError(f"The 'measurements' parameter in csv_builder() should be of type <ndarray>, passed: {type(measurements)}")
+#     if not isinstance(test, np.ndarray):
+#         raise TypeError(f"The 'test' parameter in csv_builder() should be of type <ndarray>, passed: {type(test)}")
+#     if not isinstance(filepath, Path):
+#         raise TypeError(f"The 'filepath' parameter in csv_builder() should be of type <Path>, passed: {type(filepath)}")
+#     if not isinstance(include_test, bool):
+#         raise TypeError(f"The 'include_test' parameter in csv_builder() should be of type <bool>, passed: {type(include_test)}")
+
+#     time_list         = [str(t).replace('T', ' ').replace('Z','') for t in time]
+#     test_list         = test.tolist()
+#     measurements_list = [dict(row) for row in measurements]
     
-    if time_window_start != '' and time_window_end != '':
-        print(f"\t\tTime window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
+#     df_data = []
+#     for i, t in enumerate(time_list):
+#         row_dict = {'time':t}
+#         row_dict.update(measurements_list[i])
+#         if include_test:
+#             row_dict['test'] = test_list[i]
+#         df_data.append(row_dict)
+
+#     df = pd.DataFrame(df_data)
+#     df = df[headers]
+    
+#     if time_window_start != '' and time_window_end != '':
+#         print(f"\t\tTime window specified.\n\t\t Returning data from {time_window_start} -> {time_window_end}")
         
-        df['time_of_day'] = df["time"].dt.time
-        time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
-        df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
-        df.drop(columns=['time_of_day'], inplace=True)
+#         df['time_of_day'] = df["time"].dt.time
+#         time_window_mask = (df["time_of_day"] >= time_window_start) & (df["time_of_day"] <= time_window_end)
+#         df_range = df.loc[time_window_mask].drop(columns=['time_of_day'])
+#         df.drop(columns=['time_of_day'], inplace=True)
             
-        df_range.to_csv(filepath, index=False, encoding='utf-8')
-        return
+#         df_range.to_csv(filepath, index=False, encoding='utf-8')
+#         return
     
-    df.to_csv(filepath, index=False, encoding='utf-8')
+#     df.to_csv(filepath, index=False, encoding='utf-8')
     
 
 """

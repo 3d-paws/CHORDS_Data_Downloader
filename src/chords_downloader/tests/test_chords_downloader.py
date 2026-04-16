@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from datetime import timedelta, datetime
 from pathlib import Path
 
-from chords_downloader import chords_local_download as cld
+from src.chords_downloader import chords_downloader as cld
 
 now = datetime.now()
 fmt = "%Y-%m-%d %H:%M:%S"
