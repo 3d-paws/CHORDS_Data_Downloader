@@ -39,12 +39,12 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
    - `DATA_PATH` - the path where CSV's are to be exported to your local machine
-   - `INSTRUMENT_IDS` - the list of instrument id's (see available instruments on your CHORDS portal) -> comma separated integers
+   - `INSTRUMENT_IDS` - the list of instrument id's (refer to the available instruments on your CHORDS portal) -> comma separated integers
    - `USER_EMAIL` - the email associated with your CHORDS account
    - `API_KEY` - the API associated with your CHORDS account
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
-   - `OUTPUT` - the type of output you desire; valid selections are: csv, df, or both
+   - `OUTPUT` - the type of output you desire, valid selections are: csv, df, or both -> string values
 ### chords_dataframes.py
 Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
