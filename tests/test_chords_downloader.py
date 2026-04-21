@@ -3,7 +3,8 @@ from unittest.mock import patch, MagicMock
 from datetime import timedelta, datetime
 from pathlib import Path
 
-from src.chords_downloader import chords_downloader as cld
+from chords_downloader import chords_downloader as cld
+from chords_downloader.resources.functions import *
 
 now = datetime.now()
 fmt = "%Y-%m-%d %H:%M:%S"
@@ -41,8 +42,8 @@ def test_main_raises_when_start_after_end():
     assert "Starting time cannot be after end time" in str(excinfo.value)
 
 
-@patch("chords_downloader.chords_local_download.requests.get")
-@patch("chords_downloader.chords_local_download.resources")
+@patch("chords_downloader.chords_downloader.requests.get")
+@patch("chords_downloader.chords_downloader.resources")
 def test_main_warning_when_start_before_two_years(mock_resources, mock_get):
     mock_response = MagicMock()
     mock_response.json.return_value = MOCK_JSON_RESPONSE
@@ -77,8 +78,8 @@ def test_main_warning_when_start_before_two_years(mock_resources, mock_get):
         )
 
 
-@patch("chords_downloader.chords_local_download.requests.get")
-@patch("chords_downloader.chords_local_download.resources")
+@patch("chords_downloader.chords_downloader.requests.get")
+@patch("chords_downloader.chords_downloader.resources")
 def test_main_warning_when_start_in_future(mock_resources, mock_get):
     mock_response = MagicMock()
     mock_response.json.return_value = MOCK_JSON_RESPONSE
@@ -113,8 +114,8 @@ def test_main_warning_when_start_in_future(mock_resources, mock_get):
         )
 
 
-@patch("chords_downloader.chords_local_download.requests.get")
-@patch("chords_downloader.chords_local_download.resources")
+@patch("chords_downloader.chords_downloader.requests.get")
+@patch("chords_downloader.chords_downloader.resources")
 def test_main_warning_when_end_in_future(mock_resources, mock_get):
     mock_response = MagicMock()
     mock_response.json.return_value = MOCK_JSON_RESPONSE
@@ -271,8 +272,8 @@ def test_main_raises_when_instrument_not_int():
     assert "The instrument id's must be integers" in str(excinfo.value)
 
 
-@patch("chords_downloader.chords_local_download.requests.get")
-@patch("chords_downloader.chords_local_download.resources")
+@patch("chords_downloader.chords_downloader.requests.get")
+@patch("chords_downloader.chords_downloader.resources")
 def test_main_warning_when_end_in_future(mock_resources, mock_get):
     mock_response = MagicMock()
     mock_response.json.return_value = MOCK_JSON_RESPONSE
