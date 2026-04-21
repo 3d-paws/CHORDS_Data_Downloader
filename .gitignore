@@ -3,7 +3,7 @@ __pycache__/
 *$py.class
 *.so
 .venv/
-chords_downloader.egg-info/
+src/chords_downloader.egg-info
 .pytest_cache/
 .env
 .DS_Store

@@ -60,6 +60,7 @@ docs = [
 
 [project.scripts]
 "chords-download" = "chords_downloader.main:cli"
+"chords-shortnames" = "shortname_mapper.main:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

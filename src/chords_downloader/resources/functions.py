@@ -309,11 +309,12 @@ The exception is when include_test is set to True -- it will append a column 'te
 whether the data is test data. If a wind direction column is in the set, an adjacent compass_dir column will be appended
 containing the corresponding compass rose reading for each field.
 """
-def get_columns(dictionary_list:list, include_test:bool, portal_name:str) -> list:
+def get_columns(dictionary_list:list, # include_test:bool, 
+                                                    portal_name:str) -> list:
     if not isinstance(dictionary_list, list):
         raise TypeError(f"The 'dictionary_list' parameter in get_columns() should be of type <list>, passed: {type(dictionary_list)}")
-    if not isinstance(include_test, bool):
-        raise TypeError(f"The 'include_test' parameter in get_columns() should be of type <bool>, passed: {type(include_test)}")
+    # if not isinstance(include_test, bool):
+    #     raise TypeError(f"The 'include_test' parameter in get_columns() should be of type <bool>, passed: {type(include_test)}")
     if not isinstance(portal_name, str):
         raise TypeError(f"The 'portal_name' parameter in get_columns() should be of type <str>, passed: {type(portal_name)}")
 
@@ -324,8 +325,8 @@ def get_columns(dictionary_list:list, include_test:bool, portal_name:str) -> lis
         for col in cols_sorted:
             if not col in columns:
                 columns.append(str(col))
-                if include_test:
-                    columns.append('test')
+                # if include_test:
+                #     columns.append('test')
 
     return columns
 
@@ -333,18 +334,20 @@ def get_columns(dictionary_list:list, include_test:bool, portal_name:str) -> lis
 """
 Creates a list of all the header names to be used in the csv requested by user and returns it.
 """
-def build_headers(measurements:list, columns_desired:list, include_test:bool, portal_name:str) -> list:
+def build_headers(measurements:list, columns_desired:list, # include_test:bool, 
+                                                                        portal_name:str) -> list:
     if not isinstance(measurements, list):
         raise TypeError(f"The 'measurements' parameter of build_headers() should be of type <list>, passed: {type(measurements)}")
     if not isinstance(columns_desired, list):
         raise TypeError(f"The 'columns_desired' parameter of build_headers() should be of type <list>, passed: {type(columns_desired)}")
-    if not isinstance(include_test, bool):
-        raise TypeError(f"The 'include_test' parameter of build_headers() should be of type <bool>, passed: {type(include_test)}")
+    # if not isinstance(include_test, bool):
+    #     raise TypeError(f"The 'include_test' parameter of build_headers() should be of type <bool>, passed: {type(include_test)}")
     if not isinstance(portal_name, str):
         raise TypeError(f"The 'portal_name' parameter of build_headers() should be of type <str>, passed: {type(portal_name)}")
 
     headers = ['time'] # list of strings
-    columns = get_columns(measurements, include_test, portal_name)
+    columns = get_columns(measurements, portal_name)
+    # columns = get_columns(measurements, include_test, portal_name)
     
     if len(columns) == 0: # if no data, pass to main 
         return []
@@ -356,8 +359,8 @@ def build_headers(measurements:list, columns_desired:list, include_test:bool, po
             headers.append(columns[i])
         elif len(columns_desired) != 0 and columns[i] in columns_desired:
             headers.append(columns[i])
-            if include_test:
-                headers.append(columns[i+1])
+            # if include_test:
+            #     headers.append(columns[i+1])
             if is_wind_dir(columns[i]):
                 headers.append(f'{columns[i]}_compass_dir')
         elif len(columns_desired) != 0 and columns[i] not in columns_desired:
@@ -374,25 +377,25 @@ Accepts an array of headers, timestamps, and of dictionaries containing sensor m
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Returns a dataframe.
 """
-def build_dataframe(headers: list, time: np.ndarray, measurements: np.ndarray, test: np.ndarray,
-                    include_test: bool, time_window_start='', time_window_end='') -> pd.DataFrame:
+def build_dataframe(headers: list, time: np.ndarray, measurements: np.ndarray, # test: np.ndarray, # include_test: bool, 
+                    time_window_start='', time_window_end='') -> pd.DataFrame:
     if not isinstance(headers, list):
         raise TypeError(f"'headers' must be list, got {type(headers)}")
     if not isinstance(time, np.ndarray):
         raise TypeError(f"'time' must be np.ndarray, got {type(time)}")
     if not isinstance(measurements, np.ndarray):
         raise TypeError(f"'measurements' must be np.ndarray, got {type(measurements)}")
-    if not isinstance(test, np.ndarray):
-        raise TypeError(f"'test' must be np.ndarray, got {type(test)}")
-    if not isinstance(include_test, bool):
-        raise TypeError(f"'include_test' must be bool, got {type(include_test)}")
+    # if not isinstance(test, np.ndarray):
+    #     raise TypeError(f"'test' must be np.ndarray, got {type(test)}")
+    # if not isinstance(include_test, bool):
+    #     raise TypeError(f"'include_test' must be bool, got {type(include_test)}")
 
     rows = []
     for i, t in enumerate(time.tolist()):
         row = {"time": str(t).replace("T", " ").replace("Z", "")}
         row.update(dict(measurements[i]))
-        if include_test:
-            row["test"] = test.tolist()[i]
+        # if include_test:
+        #     row["test"] = test.tolist()[i]
         rows.append(row)
 
     df = pd.DataFrame(rows)
@@ -426,19 +429,19 @@ def write_dataframe_csv(df: pd.DataFrame, filepath: Path) -> None:
     df.to_csv(filepath, index=False, encoding="utf-8")
     
 
-"""
-Accepts a dictionary containing the result of the API data download from CHORDS and checks whether it was successful.
-Returns True if excess datapoints, False otherwise.
-"""
-def has_excess_datapoints(dictionary:dict) -> bool:
-    if not isinstance(dictionary, dict):
-        raise TypeError(f"The 'dictionary' parameter in has_excess_datapoints() should be of type <dict>, passed: {type(dictionary)}")
+# """
+# Accepts a dictionary containing the result of the API data download from CHORDS and checks whether it was successful.
+# Returns True if excess datapoints, False otherwise.
+# """
+# def has_excess_datapoints(dictionary:dict) -> bool:
+#     if not isinstance(dictionary, dict):
+#         raise TypeError(f"The 'dictionary' parameter in has_excess_datapoints() should be of type <dict>, passed: {type(dictionary)}")
 
-    for key in dictionary: 
-        if key == "errors":
-            return True
+#     for key in dictionary: 
+#         if key == "errors":
+#             return True
 
-    return False
+#     return False
 
 
 """
@@ -459,127 +462,127 @@ def struct_has_data(measurements:np.ndarray, time:np.ndarray, test:np.ndarray) -
     return True
 
 
-"""
-Comprehensive REST API error handler. Returns True if error found, False if OK.
-"""
-def has_errors(response: requests.Response, portal_name: str, iD: int) -> bool:
+# """
+# Comprehensive REST API error handler. Returns True if error found, False if OK.
+# """
+# def has_errors(response: requests.Response, portal_name: str, iD: int) -> bool:
     
-    if isinstance(response, MagicMock): # Skip type check for MagicMock (pytest)
-        return False                    # Mock always "succeeds" for tests
+#     if isinstance(response, MagicMock): # Skip type check for MagicMock (pytest)
+#         return False                    # Mock always "succeeds" for tests
 
-    if not isinstance(response, requests.Response):
-        raise TypeError(f"Expected requests.Response, got {type(response)}")
-    if not isinstance(portal_name, str):
-        raise TypeError(f"portal_name should be str, got {type(portal_name)}")
-    if not isinstance(iD, int):
-        raise TypeError(f"iD should be int, got {type(iD)}")
+#     if not isinstance(response, requests.Response):
+#         raise TypeError(f"Expected requests.Response, got {type(response)}")
+#     if not isinstance(portal_name, str):
+#         raise TypeError(f"portal_name should be str, got {type(portal_name)}")
+#     if not isinstance(iD, int):
+#         raise TypeError(f"iD should be int, got {type(iD)}")
     
-    status_code = response.status_code
+#     status_code = response.status_code
     
-    if status_code == 200: # Success - check JSON content for app-level errors
-        try:
-            all_fields = response.json()
-        except requests.exceptions.JSONDecodeError:
-            print(f"{portal_name} #{iD}: Non-JSON response (Status 200)")
-            return True
+#     if status_code == 200: # Success - check JSON content for app-level errors
+#         try:
+#             all_fields = response.json()
+#         except requests.exceptions.JSONDecodeError:
+#             print(f"{portal_name} #{iD}: Non-JSON response (Status 200)")
+#             return True
         
-        # App-level errors in JSON body
-        if 'errors' in all_fields and all_fields['errors']:
-            error_msg = all_fields['errors'][0]
-            print(f"\t\t{portal_name} #{iD}: API Errors - {error_msg}")
+#         # App-level errors in JSON body
+#         if 'errors' in all_fields and all_fields['errors']:
+#             error_msg = all_fields['errors'][0]
+#             print(f"\t\t{portal_name} #{iD}: API Errors - {error_msg}")
             
-            if 'Access Denied' in error_msg or 'authentication required' in error_msg:
-                print("\t\tFix: Check email/api_key in URL")
-                sys.exit(1)
+#             if 'Access Denied' in error_msg or 'authentication required' in error_msg:
+#                 print("\t\tFix: Check email/api_key in URL")
+#                 sys.exit(1)
 
-            return True
+#             return True
             
-        if 'error' in all_fields:
-            print(f"\t\t{portal_name} #{iD}: {all_fields['error']}")
-            return True
+#         if 'error' in all_fields:
+#             print(f"\t\t{portal_name} #{iD}: {all_fields['error']}")
+#             return True
             
-        return False  # JSON OK
+#         return False  # JSON OK
     
-    elif status_code == 401:
-        print(f"\t\t{portal_name} #{iD}: Unauthorized - Invalid API key")
-        sys.exit(1)
+#     elif status_code == 401:
+#         print(f"\t\t{portal_name} #{iD}: Unauthorized - Invalid API key")
+#         sys.exit(1)
         
-    elif status_code == 403:
-        print(f"\t\t{portal_name} #{iD}: Forbidden - No permission for instrument")
-        return True
+#     elif status_code == 403:
+#         print(f"\t\t{portal_name} #{iD}: Forbidden - No permission for instrument")
+#         return True
         
-    elif status_code == 404:
-        print(f"\t\t{portal_name} #{iD}: Not Found - Instrument/ID missing")
-        return True
+#     elif status_code == 404:
+#         print(f"\t\t{portal_name} #{iD}: Not Found - Instrument/ID missing")
+#         return True
     
-    elif status_code == 413: 
-        return              # Excess datapoints requested, pass back for reduction
+#     elif status_code == 413: 
+#         return              # Excess datapoints requested, pass back for reduction
         
-    elif status_code == 422:
-        print(f"\t\t{portal_name} #{iD}: Unprocessable - Bad date range/params")
-        print(f"\t\t   URL: {response.url}")
-        return True
+#     elif status_code == 422:
+#         print(f"\t\t{portal_name} #{iD}: Unprocessable - Bad date range/params")
+#         print(f"\t\t   URL: {response.url}")
+#         return True
         
-    elif status_code in (500, 502, 503, 504):
-        print(f"\t\t{portal_name} #{iD}: Server Error {status_code} - Try later")
-        return True
+#     elif status_code in (500, 502, 503, 504):
+#         print(f"\t\t{portal_name} #{iD}: Server Error {status_code} - Try later")
+#         return True
         
-    else:
-        print(f"\t\t{portal_name} #{iD}: Unexpected {status_code}")
-        print(f"\t\t   Response: {response.text[:200]}...")
-        return True
+#     else:
+#         print(f"\t\t{portal_name} #{iD}: Unexpected {status_code}")
+#         print(f"\t\t   Response: {response.text[:200]}...")
+#         return True
 
 
-"""
-Handles data request error where number of data points exceeds that allowed. Returns a list of new timestamps for which 
-to run the API request to CHORDS s.t. the number of data points requested is less than the max allowed. Returns the 
-lists of data necessary for main() to build csv's.
-"""
-def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, timestamp_end:datetime, \
-                                    portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
-    if not isinstance(error_message, str):
-        raise TypeError(f"The 'error_message' parameter in reduce_datapoints() should be of type <str>, passed: {type(error_message)}")
-    if not isinstance(iD, int):
-        raise TypeError(f"The 'iD' parameter in reduce_datapoints() should be of type <int>, passed: {type(iD)}")
-    if not isinstance(timestamp_start, datetime):
-        raise TypeError(f"The 'timestamp_start' parameter in reduce_datapoints() should be of type <datetime>, passed: {type(timestamp_start)}")
-    if not isinstance(timestamp_end, datetime):
-        raise TypeError(f"The 'timestamp_end' parameter in reduce_datapoints() should be of type <datetime>, passed: {type(timestamp_end)}")
-    if not isinstance(portal_url, str):
-        raise TypeError(f"The 'portal_url' parameter in reduce_datapoints() should be of type <str>, passed: {type(portal_url)}")
-    if not isinstance(user_email, str):
-        raise TypeError(f"The 'user_email' parameter in reduce_datapoints() should be of type <str>, passed: {type(user_email)}")
-    if not isinstance(api_key, str):
-        raise TypeError(f"The 'api_key' parameter in reduce_datapoints() should be of type <str>, passed: {type(api_key)}")
+# """
+# Handles data request error where number of data points exceeds that allowed. Returns a list of new timestamps for which 
+# to run the API request to CHORDS s.t. the number of data points requested is less than the max allowed. Returns the 
+# lists of data necessary for main() to build csv's.
+# """
+# def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, timestamp_end:datetime, \
+#                                     portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
+#     if not isinstance(error_message, str):
+#         raise TypeError(f"The 'error_message' parameter in reduce_datapoints() should be of type <str>, passed: {type(error_message)}")
+#     if not isinstance(iD, int):
+#         raise TypeError(f"The 'iD' parameter in reduce_datapoints() should be of type <int>, passed: {type(iD)}")
+#     if not isinstance(timestamp_start, datetime):
+#         raise TypeError(f"The 'timestamp_start' parameter in reduce_datapoints() should be of type <datetime>, passed: {type(timestamp_start)}")
+#     if not isinstance(timestamp_end, datetime):
+#         raise TypeError(f"The 'timestamp_end' parameter in reduce_datapoints() should be of type <datetime>, passed: {type(timestamp_end)}")
+#     if not isinstance(portal_url, str):
+#         raise TypeError(f"The 'portal_url' parameter in reduce_datapoints() should be of type <str>, passed: {type(portal_url)}")
+#     if not isinstance(user_email, str):
+#         raise TypeError(f"The 'user_email' parameter in reduce_datapoints() should be of type <str>, passed: {type(user_email)}")
+#     if not isinstance(api_key, str):
+#         raise TypeError(f"The 'api_key' parameter in reduce_datapoints() should be of type <str>, passed: {type(api_key)}")
 
-    print("\tBeginning reduction calculation.")
+#     print("\tBeginning reduction calculation.")
 
-    queue = deque([(timestamp_start, timestamp_end)])
-    time, measurements, test = [], [], []
-    total_num_measurements = 0
+#     queue = deque([(timestamp_start, timestamp_end)])
+#     time, measurements, test = [], [], []
+#     total_num_measurements = 0
 
-    while queue:
-        start_seg, end_seg = queue.popleft()
-        print(f"\t\tGetting segment {start_seg} -> {end_seg}")
+#     while queue:
+#         start_seg, end_seg = queue.popleft()
+#         print(f"\t\tGetting segment {start_seg} -> {end_seg}")
 
-        url = f"{portal_url}/api/v1/data/{iD}?start={start_seg}&end={end_seg}&email={user_email}&api_key={api_key}"
-        response = requests.get(url)
-        all_fields = loads(dumps(response.json()))
+#         url = f"{portal_url}/api/v1/data/{iD}?start={start_seg}&end={end_seg}&email={user_email}&api_key={api_key}"
+#         response = requests.get(url)
+#         all_fields = loads(dumps(response.json()))
 
-        if has_excess_datapoints(all_fields):
-            mid = start_seg + (end_seg - start_seg)/2
-            queue.appendleft((start_seg, mid))
-            queue.append((mid, end_seg))
-            continue
+#         if has_excess_datapoints(all_fields):
+#             mid = start_seg + (end_seg - start_seg)/2
+#             queue.appendleft((start_seg, mid))
+#             queue.append((mid, end_seg))
+#             continue
 
-        data = all_fields['features'][0]['properties']['data']
-        for dictionary in data:
-            time.append(str(dictionary['time']))
-            test.append(str(dictionary['test']))
-            total_num_measurements += len(dictionary['measurements'].keys())
-            add_wind = write_compass_direction(dict(dictionary['measurements']), fill_empty)
-            measurements.append(add_wind)
+#         data = all_fields['features'][0]['properties']['data']
+#         for dictionary in data:
+#             time.append(str(dictionary['time']))
+#             test.append(str(dictionary['test']))
+#             total_num_measurements += len(dictionary['measurements'].keys())
+#             add_wind = write_compass_direction(dict(dictionary['measurements']), fill_empty)
+#             measurements.append(add_wind)
     
-    print("\tFinished reduction calculation.")
-    return [time, measurements, test, total_num_measurements]
+#     print("\tFinished reduction calculation.")
+#     return [time, measurements, test, total_num_measurements]
      
