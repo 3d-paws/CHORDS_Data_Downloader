@@ -1,0 +1,69 @@
+portals:
+  - name: 3D-PAWS
+    url: https://3d.chordsrt.com
+    api: v9gxuLDgio4BwMvHc7f5
+    enabled: true
+  - name: Barbados
+    url: https://3d-barbados.chordsrt.com
+    api: piugj6zxDsfNs865YB5L
+    enabled: true
+  - name: Trinidad
+    url: https://3d-trinidad.chordsrt.com
+    api: dVajhzmfxd97weQgyspC
+    enabled: true
+  - name: Dominican-Republic
+    url: https://3d-dr.icdp.ucar.edu
+    api: apN1QV_dK6spAnBBRS-d
+    enabled: true
+  - name: Calibration
+    url: https://3d-calibration.chordsrt.com
+    api: tYmLUWcog8oj56gWv_JF
+    enabled: true
+  - name: FEWSNET
+    url: https://3d-fewsnet.icdp.ucar.edu
+    api: JestcA8mS8bXTGbY_6sg
+    enabled: true
+  - name: Kenya
+    url: https://3d-kenya.chordsrt.com
+    api: GbwLdKSxv8yL4Jqk4T7b
+    enabled: true
+  - name: Zimbabwe
+    url: https://3d-zimbabwe.icdp.ucar.edu
+    api: CxjPED8tMs2WHjHaNXte
+    enabled: true
+  - name: Argentina
+    url: https://3d-argentina.icdp.ucar.edu
+    api: j1W8rbTsRpDRV9CD6EPy
+    enabled: true
+  - name: IITM
+    url: https://3d-iitm.icdp.ucar.edu
+    api: xD3xZy5mz-9sm4qpZrtQ
+    enabled: true
+  - name: Fiji
+    url: http://3d-fiji.icdp.ucar.edu
+    api: a8mEcxq2vYt7ZM2HuT_D
+    enabled: true
+  - name: Bahamas
+    url: http://3d-bahamas.icdp.ucar.edu
+    api: Cq1ABgz3Hu8WJzqeF7fG
+    enabled: true
+  - name: Malawi
+    url: http://3d-malawi.icdp.ucar.edu
+    api: H5Rvtms7ERkgEzdkEukP
+    enabled: true
+  - name: Jamaica
+    url: http://3d-jamaica.icdp.ucar.edu
+    api: Ju4yY7yrzssD4sAgzFRU
+    enabled: true
+  - name: Ethiopia
+    url: https://3d-ethiopia.icdp.ucar.edu
+    api: kwyLpyTnVzAHpmqyFDyi
+    enabled: true
+  # - name: Somalia
+  #   url: http://3d-somalia.icdp.ucar.edu
+  #   api: ShowezTbYvqgYYeSGbjN
+  #   enabled: true
+  - name: Zambia
+    url: https://3d-zambia.chordsrt.com
+    api: nJGNj6aqZg1rX6CzHrYr
+    enabled: false
