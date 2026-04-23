@@ -1,154 +1,233 @@
-"""
-Accepts a dictionary containing the result of the API data download from CHORDS and checks whether it was successful.
-Returns True if excess datapoints, False otherwise.
-"""
-def has_excess_datapoints(dictionary:dict) -> bool:
-    if not isinstance(dictionary, dict):
-        raise TypeError(f"The 'dictionary' parameter in has_excess_datapoints() should be of type <dict>, passed: {type(dictionary)}")
+from __future__ import annotations
 
-    for key in dictionary: 
-        if key == "errors":
-            return True
-
-    return False
-
-
-
-import sys
 import requests
-from unittest.mock import MagicMock
-
-"""
-Comprehensive REST API error handler. Returns True if error found, False if OK.
-"""
-def has_errors(response: requests.Response, portal_name: str, iD: int) -> bool:
-    
-    if isinstance(response, MagicMock): # Skip type check for MagicMock (pytest)
-        return False                    # Mock always "succeeds" for tests
-
-    if not isinstance(response, requests.Response):
-        raise TypeError(f"Expected requests.Response, got {type(response)}")
-    if not isinstance(portal_name, str):
-        raise TypeError(f"portal_name should be str, got {type(portal_name)}")
-    if not isinstance(iD, int):
-        raise TypeError(f"iD should be int, got {type(iD)}")
-    
-    status_code = response.status_code
-    
-    if status_code == 200: # Success - check JSON content for app-level errors
-        try:
-            all_fields = response.json()
-        except requests.exceptions.JSONDecodeError:
-            print(f"{portal_name} #{iD}: Non-JSON response (Status 200)")
-            return True
-        
-        # App-level errors in JSON body
-        if 'errors' in all_fields and all_fields['errors']:
-            error_msg = all_fields['errors'][0]
-            print(f"\t\t{portal_name} #{iD}: API Errors - {error_msg}")
-            
-            if 'Access Denied' in error_msg or 'authentication required' in error_msg:
-                print("\t\tFix: Check email/api_key in URL")
-                sys.exit(1)
-
-            return True
-            
-        if 'error' in all_fields:
-            print(f"\t\t{portal_name} #{iD}: {all_fields['error']}")
-            return True
-            
-        return False  # JSON OK
-    
-    elif status_code == 401:
-        print(f"\t\t{portal_name} #{iD}: Unauthorized - Invalid API key")
-        sys.exit(1)
-        
-    elif status_code == 403:
-        print(f"\t\t{portal_name} #{iD}: Forbidden - No permission for instrument")
-        return True
-        
-    elif status_code == 404:
-        print(f"\t\t{portal_name} #{iD}: Not Found - Instrument/ID missing")
-        return True
-    
-    elif status_code == 413: 
-        return              # Excess datapoints requested, pass back for reduction
-        
-    elif status_code == 422:
-        print(f"\t\t{portal_name} #{iD}: Unprocessable - Bad date range/params")
-        print(f"\t\t   URL: {response.url}")
-        return True
-        
-    elif status_code in (500, 502, 503, 504):
-        print(f"\t\t{portal_name} #{iD}: Server Error {status_code} - Try later")
-        return True
-        
-    else:
-        print(f"\t\t{portal_name} #{iD}: Unexpected {status_code}")
-        print(f"\t\t   Response: {response.text[:200]}...")
-        return True
-
-
-
-from datetime import datetime
 from collections import deque
-from json import dumps, loads
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Any, Callable
+
+
+DATE_FMT = "%Y-%m-%d %H:%M:%S"
+
+
+@dataclass(frozen=True)
+class ChordsAuth:
+    email:   str
+    api_key: str
+
+@dataclass(frozen=True)
+class ChordsPortal:
+    name:     str
+    base_url: str
+
+@dataclass(frozen=True)
+class ChordsWindow:
+    start:  datetime
+    end:    datetime
+
+
+class ChordsClientError(Exception):                     pass
+class ChordsAuthError(ChordsClientError):               pass
+class ChordsPermissionError(ChordsClientError):         pass
+class ChordsNotFoundError(ChordsClientError):           pass
+class ChordsValidationError(ChordsClientError):         pass
+class ChordsServerError(ChordsClientError):             pass
+class ChordsExcessDatapointsError(ChordsClientError):   pass
+
 
 """
-Handles data request error where number of data points exceeds that allowed. Returns a list of new timestamps for which 
-to run the API request to CHORDS s.t. the number of data points requested is less than the max allowed. Returns the 
-lists of data necessary for main() to build csv's.
+NOTE: Insert docstring here.
 """
-def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, timestamp_end:datetime, \
-                                    portal_url:str, user_email:str, api_key:str, fill_empty) -> list:
-    if not isinstance(error_message, str):
-        raise TypeError(f"The 'error_message' parameter in reduce_datapoints() should be of type <str>, passed: {type(error_message)}")
-    if not isinstance(iD, int):
-        raise TypeError(f"The 'iD' parameter in reduce_datapoints() should be of type <int>, passed: {type(iD)}")
-    if not isinstance(timestamp_start, datetime):
-        raise TypeError(f"The 'timestamp_start' parameter in reduce_datapoints() should be of type <datetime>, passed: {type(timestamp_start)}")
-    if not isinstance(timestamp_end, datetime):
-        raise TypeError(f"The 'timestamp_end' parameter in reduce_datapoints() should be of type <datetime>, passed: {type(timestamp_end)}")
-    if not isinstance(portal_url, str):
-        raise TypeError(f"The 'portal_url' parameter in reduce_datapoints() should be of type <str>, passed: {type(portal_url)}")
+def _validate_common_inputs(portal_name: str, base_url: str, user_email: str,
+                            api_key: str, start: datetime, end: datetime,) -> None:
+    if not isinstance(portal_name, str):
+        raise TypeError(f"portal_name must be str, got {type(portal_name)}")
+    if not isinstance(base_url, str):
+        raise TypeError(f"base_url must be str, got {type(base_url)}")
     if not isinstance(user_email, str):
-        raise TypeError(f"The 'user_email' parameter in reduce_datapoints() should be of type <str>, passed: {type(user_email)}")
+        raise TypeError(f"user_email must be str, got {type(user_email)}")
     if not isinstance(api_key, str):
-        raise TypeError(f"The 'api_key' parameter in reduce_datapoints() should be of type <str>, passed: {type(api_key)}")
+        raise TypeError(f"api_key must be str, got {type(api_key)}")
+    if not isinstance(start, datetime):
+        raise TypeError(f"start must be datetime, got {type(start)}")
+    if not isinstance(end, datetime):
+        raise TypeError(f"end must be datetime, got {type(end)}")
+    if start >= end:
+        raise ValueError("start must be before end")
 
-    print("\tBeginning reduction calculation.")
 
-    queue = deque([(timestamp_start, timestamp_end)])
-    time, measurements, test = [], [], []
-    total_num_measurements = 0
+"""
+NOTE: Insert docstring here.
+"""
+def _format_dt(dt: datetime) -> str:
+    return dt.strftime(DATE_FMT)
+
+
+"""
+NOTE: Insert docstring here.
+"""
+def _request_json(url: str, params:dict[str, Any], timeout:int=30) -> tuple[requests.Response, dict]:
+    response = requests.get(url=url, params=params, timeout=timeout)
+
+    try:
+        payload = response.json()
+    except Exception:
+        payload ={}
+
+    return response, payload
+
+
+"""
+NOTE: Insert docstring here.
+"""
+def _is_excess_datapoints(response: requests.Response, payload:dict) -> bool:
+    if response.status_code == 413:
+        return True
+    
+    errors = payload.get("errors")
+    if not errors:
+        return False
+    
+    if isinstance(errors, list):
+        text = " ".join(str(e) for e in errors).lower()
+    else:
+        text = str(errors).lower()
+
+    return (
+        "too many datapoints" in text
+        or "excess datapoints" in text
+        or "exceeds" in text and "datapoint" in text
+    )
+
+
+"""
+NOTE: Insert docstring here.
+"""
+def _raise_for_error(response:requests.Response, payload:dict, portal_name:str, context:str) -> None:
+    status_code = response.status_code
+
+    if _is_excess_datapoints(response, payload):
+        raise ChordsExcessDatapointsError(f"{portal_name} {context}: excess datapoints requested")
+
+    if status_code == 401:
+        raise ChordsAuthError(f"{portal_name} {context}: unauthorized - invalid email/api_key")
+    if status_code == 403:
+        raise ChordsPermissionError(f"{portal_name} {context}: forbidden - access denied")
+    if status_code == 404:
+        raise ChordsNotFoundError(f"{portal_name} {context}: endpoint/instrument not found")
+    if status_code == 422:
+        raise ChordsValidationError(f"{portal_name} {context}: bad date range or parameters")
+    if status_code in (500, 502, 503, 504):
+        raise ChordsServerError(f"{portal_name} {context}: server error {status_code}")
+    if status_code >= 400:
+        raise ChordsClientError(f"{portal_name} {context}: unexpected HTTP {status_code}")
+
+    if "errors" in payload and payload["errors"]:
+        msg = payload["errors"]
+        if isinstance(msg, list):
+            msg = msg[0]
+        text = str(msg)
+
+        if "access denied" in text.lower() or "authentication required" in text.lower():
+            raise ChordsAuthError(f"{portal_name} {context}: {text}")
+        
+        raise ChordsClientError(f"{portal_name} {context}: {text}")
+    
+    if "error" in payload:
+        raise ChordsClientError(f"{portal_name} {context}: {text}")
+
+
+"""
+NOTE: Insert docstring here.
+"""
+def _extract_records(payload:dict) -> list[dict]:
+    records = []
+    features = payload.get("features", [])
+
+    for feature in features:
+        properties = feature.get("properties", {})
+        data = properties.get("data", [])
+        if isinstance(data, list):
+            records.extend(data)
+    
+    return records
+
+
+"""
+NOTE: Insert docstring here.
+"""
+def _dedupe_records(records:list[dict]) -> list[dict]:
+    seen = set()
+    output = []
+
+    for rec in records:
+        time_val = rec.get("time")
+        measurements = rec.get("measurements", {})
+        measurement_key = tuple(sorted(measurements.items())) if isinstance(measurements, dict) else ()
+        dedupe_key = (time_val, measurement_key)
+
+        if dedupe_key not in seen:
+            seen.add(dedupe_key)
+            output.append(rec)
+        
+        output.sort(key=lambda r: r.get("time", ""))
+        return output
+
+
+"""
+NOTE: Insert docstring here.
+"""
+def _fetch_with_reduction(
+        portal_name: str,
+        base_url: str, 
+        user_email: str,
+        api_key: str,
+        start: datetime,
+        end: datetime,
+        endpoint_builder: Callable[[str], str],
+        context: str,
+        timeout: int=30,
+        min_window: timedelta=timedelta(minutes=1)
+) -> list[dict]:
+    _validate_common_inputs(portal_name, base_url, user_email, api_key, start, end)
+
+    queue = deque([start, end])
+    all_records: list[dict] = []
 
     while queue:
-        start_seg, end_seg = queue.popleft()
-        print(f"\t\tGetting segment {start_seg} -> {end_seg}")
+        seg_start, seg_end = queue.popleft()
 
-        url = f"{portal_url}/api/v1/data/{iD}?start={start_seg}&end={end_seg}&email={user_email}&api_key={api_key}"
-        response = requests.get(url)
-        all_fields = loads(dumps(response.json()))
+        url = endpoint_builder(base_url)
+        params = {
+            "start": _format_dt(seg_start),
+            "end": _format_dt(seg_end),
+            "email": user_email,
+            "api_key": api_key
+        }
 
-        if has_excess_datapoints(all_fields):
-            mid = start_seg + (end_seg - start_seg)/2
-            queue.appendleft((start_seg, mid))
-            queue.append((mid, end_seg))
+        response, payload = _request_json(url, params=params, timeout=timeout)
+
+        if _is_excess_datapoints(response, payload):
+            span = seg_end - seg_start
+            if span <= min_window:
+                raise ChordsExcessDatapointsError(
+                    f"{portal_name} {context}: still too many datapoints at minimum window {min_window}"
+                )
+            
+            midpoint = seg_start + span/2
+            queue.appendleft((midpoint, seg_end))
+            queue.append((seg_start, midpoint))
             continue
 
-        data = all_fields['features'][0]['properties']['data']
-        for dictionary in data:
-            time.append(str(dictionary['time']))
-            test.append(str(dictionary['test']))
-            total_num_measurements += len(dictionary['measurements'].keys())
-            add_wind = write_compass_direction(dict(dictionary['measurements']), fill_empty)
-            measurements.append(add_wind)
-    
-    print("\tFinished reduction calculation.")
-    return [time, measurements, test, total_num_measurements]
+        _raise_for_error(response, payload, portal_name, context)
+        all_records.extend(_extract_records(payload))
+
+    return _dedupe_records(all_records)
 
 
-
+"""
+NOTE: Insert docstring here.
+"""
 def fetch_instrument_records(
     portal_name: str,
     base_url: str,
@@ -156,17 +235,47 @@ def fetch_instrument_records(
     user_email: str,
     api_key: str,
     start: datetime,
-    end: datetime,
+    end: datetime
 ) -> list[dict]:
-    ...
+    if not isinstance(instrument_id, int):
+        raise TypeError(f"Parameter 'instrument_id' must be type <int>, got {type(instrument_id)}")
 
+    def endpoint_builder(base: str) -> str:
+        return f"{base}/api/v1/data/{instrument_id}"
+    
+    return _fetch_with_reduction(
+        portal_name=portal_name,
+        base_url=base_url,
+        user_email=user_email,
+        api_key=api_key,
+        start=start, 
+        end=end,
+        endpoint_builder=endpoint_builder,
+        context=f"instrument #{instrument_id}"
+    )
+
+
+"""
+NOTE: Insert docstring here.
+"""
 def fetch_portal_records(
-    portal_name: str,
-    base_url: str,
-    user_email: str,
-    api_key: str,
-    start: datetime,
-    end: datetime,
+        portal_name: str,
+        base_url: str,
+        user_email: str,
+        api_key: str,
+        start: datetime,
+        end: datetime
 ) -> list[dict]:
-    ...
-
+    def endpoint_builder(base: str) -> str:
+        return f"{base}/api/v1/data"
+    
+    return _fetch_with_reduction(
+        portal_name=portal_name,
+        base_url=base_url,
+        user_email=user_email,
+        api_key=api_key,
+        start=start,
+        end=end,
+        endpoint_builder=endpoint_builder,
+        context="portal-wide"
+    )

@@ -29,12 +29,9 @@ user_email         = os.getenv("USER_EMAIL")
 api_key            = os.getenv("API_KEY") 
 start              = os.getenv("START") 
 end                = os.getenv("END")
-output             = os.getenv("OUTPUT")
+output             = os.getenv("OUTPUT", "csv")
 
 # Optional user parameters -----------------------------------------------
-# fill_empty         = os.getenv("FILL_EMPTY", "")  # NOTE: 04-16-2026 Removed bc not used
-include_test       = os.getenv("INCLUDE_TEST", "False").lower() == "true"
-
 columns_desired_str = os.getenv("COLUMNS_DESIRED", "[]")
 if columns_desired_str:
     columns_desired = [col.strip() for col in columns_desired_str.split(',')]
@@ -51,8 +48,9 @@ if not all(required):
     raise ValueError(f"Missing required environment variables: {missing}.\nCheck your .env file.")
 
 def main():
-    chords_downloader.main(portal_url, portal_name, data_path, instrument_ids,
-                                user_email, api_key, start, end, output)
+    chords_downloader.main(portal_url, portal_name, data_path, instrument_ids, user_email, api_key, start, end, 
+                           output=output, columns_desired=columns_desired, time_window_start=time_window_start, 
+                           time_window_end=time_window_end)
 
 
 if __name__ == '__main__':
