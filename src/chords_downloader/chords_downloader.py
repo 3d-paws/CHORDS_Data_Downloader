@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import List, Tuple
 
 def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, user_email:str, 
-         api_key:str, start:str, end:str, fill_empty='', # include_test:bool=False, 
-         columns_desired:list=None, time_window_start:str='', time_window_end:str='', output:str="csv"):
+         api_key:str, start:str, end:str, fill_empty='', columns_desired:list=None, 
+         time_window_start:str='', time_window_end:str='', output:str="csv"):
  
     # User input validation -----------------------------------------------------------------------------------------------------------
     format_str = "%Y-%m-%d %H:%M:%S"
@@ -60,7 +60,6 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
 
         time            = [] # list of strings  (e.g. '2023-12-17T00:00:04Z')
         measurements    = [] # list of dictionaries  (e.g. {'t1': 25.3, 'rh1': 92.7, 'sp1': 1007.43, 't2': 26.9, 'msl1': 1013.01, 't3': 26.1})
-        # test            = [] # list of strings of whether data point is a test value (either 'true' or 'false')
         total_num_measurements  = 0
         total_num_timestamps    = 0
 
@@ -75,36 +74,31 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         if resources.has_excess_datapoints(all_fields): # reduce timeframe in API call
             print("\tLarge data request -- reducing.")
             reduced_data = resources.reduce_datapoints(all_fields['errors'][0], int(iD), timestamp_start, timestamp_end, \
-                                                portal_url, user_email, api_key, fill_empty)    # list
-                                                # e.g. [time, measurements, test, total_num_measurements]
+                                                        portal_url, user_email, api_key, fill_empty)    # list
+                                                        # e.g. [time, measurements, total_num_measurements]
             time                    = reduced_data[0]
             measurements            = reduced_data[1]
-            # test                    = reduced_data[2]
-            total_num_measurements  = reduced_data[3]
+            total_num_measurements  = reduced_data[2]
         else:
             data = all_fields['features'][0]['properties']['data']  # list of dictionaries 
-                                                                    # ( e.g. {'time': '2023-12-17T18:45:56Z', 'test': 'false', 'measurements': {'ws': 1.55, 'rain': 1}} )
+                                                                    # ( e.g. {'time': '2023-12-17T18:45:56Z', 'measurements': {'ws': 1.55, 'rain': 1}} )
             for i in range(len(data)):
                 total_num_measurements += len(data[i]['measurements'].keys())
                 total_num_timestamps   += 1
                 
                 to_append = resources.write_compass_direction(dict(data[i]['measurements']), fill_empty)
                 measurements.append(to_append)
-                # test.append(str(data[i]['test']))
                 time.append(str(data[i]['time']))
 
         headers = resources.build_headers(measurements, columns_desired, portal_name) # list of strings 
-        # headers = resources.build_headers(measurements, columns_desired, include_test, portal_name) # list of strings 
         measurements_array  = np.array(measurements)
         time_array          = np.array(time)
-        # test_array          = np.array(test)
         
-        # if resources.struct_has_data(measurements_array, time_array, test_array):
         if resources.struct_has_data(measurements_array, time_array): 
             df = resources.build_dataframe(
-                headers, time_array, measurements_array, # test_array, include_test, 
+                headers, time_array, measurements_array, 
                 timestamp_window_start, timestamp_window_end
-            ) # NOTE: 04/16/2026 -- removed fill_empty because it isn't currently used in build_dataframes()
+            )
             
             file_path = data_path / f"{portal_name}_Instrument-{iD}_{timestamp_start.date()}_{timestamp_end.date()}.csv"
             if output  == "csv":
@@ -147,8 +141,6 @@ def parse_args() -> Tuple[str, str, Path, List[int], str, str, str, str]:
     parser.add_argument("api_key",              type=str,   help="The API key which corresponds to the user's email address.")
     parser.add_argument("start",                type=str,   help="The timestamp from which to start downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
     parser.add_argument("end",                  type=str,   help="The timestamp at which to stop downloading data (MUST be in the following format: YYYY-MM-DD HH:MM:SS).")
-    # parser.add_argument("-fill_empty",                      help="Enter whatever value should be used to signal no data (e.g. -999.99 or 'NaN'). Empty string by default (creates smaller files).")
-    # parser.add_argument("-include_test",        type=bool,  help="Set to True to include boolean columns next to each data column which specify whether data collected was test data (False by default). ")
     parser.add_argument("-columns_desired",     type=list,  help="Enter the shortnames for the columns to include in csv (e.g. ['t1', 't2', 't3']). Includes all if left blank.")
     parser.add_argument("-time_window_start",   type=str,   help="Timestamp from which to collect subset of data (MUST be in the following format: 'HH:MM:SS'). Includes all timestamps if left blank.")
     parser.add_argument("-time_window_end",     type=str,   help="Timestamp from which to stop collecting subset of data (MUST be in the following format: 'HH:MM:SS') Includes all timestamps if left blank.")
@@ -164,8 +156,6 @@ def parse_args() -> Tuple[str, str, Path, List[int], str, str, str, str]:
         args.api_key, 
         args.start, 
         args.end, 
-        # args.fill_empty, 
-        # args.include_test,
         args.columns_desired,
         args.time_window_start,
         args.time_window_end,
