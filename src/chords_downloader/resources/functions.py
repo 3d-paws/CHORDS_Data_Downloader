@@ -321,6 +321,7 @@ def get_columns(dictionary_list:list, portal_name:str) -> list:
     for dictionary in dictionary_list:
         cols = list(dictionary.keys())
         cols_sorted = sort_columns(cols, portal_name)
+
         for col in cols_sorted:
             if not col in columns:
                 columns.append(str(col))
@@ -339,36 +340,60 @@ def build_headers(measurements:list, columns_desired:list, portal_name:str) -> l
     if not isinstance(portal_name, str):
         raise TypeError(f"The 'portal_name' parameter of build_headers() should be of type <str>, passed: {type(portal_name)}")
 
-    headers = ['time'] # list of strings
-    columns = get_columns(measurements, portal_name)
+    headers: list[str] = ['time']
+    columns = get_columns(measurements, portal_name)    # applies sorted column order by portal
     
-    if len(columns) == 0: # if no data, pass to main 
+    if len(columns) == 0:
         return []
+    
     if not headers_are_valid(columns_desired, columns, portal_name): # check if user typed in recognized shortnames
         sys.exit(1)
     
-    for i in range(len(columns)):
-        if len(columns_desired) == 0: # no user-specified columns
-            headers.append(columns[i])
-        elif len(columns_desired) != 0 and columns[i] in columns_desired:
-            headers.append(columns[i])
-            if is_wind_dir(columns[i]):
-                headers.append(f'{columns[i]}_compass_dir')
-        elif len(columns_desired) != 0 and columns[i] not in columns_desired:
-            continue  
-        else:
-            print("Error locating column header names.")
-            sys.exit(1)
+    for col in columns:
+        if (len(columns_desired) == 0) or (col in columns_desired):
+            headers.append(col)
+            # if is_wind_dir(col): 
+            #     headers.append(f"{col}_compass_dir")
 
     return headers
 
+
+"""
+TODO: Insert docstring here.
+"""
+def get_sensor_fullname_map(variables:list[dict]) -> dict[str:str]:
+    if not isinstance(variables, list):
+        raise TypeError(f"'variables' expects <list>, got {type(variables)}")
+    
+    mapping: dict[str:str] = {}
+
+    for i, var in enumerate(variables):
+        if not isinstance(var, dict):
+            raise TypeError(f"'variables[{i}]' expects <dict>, got {type(var)}")
+        
+        short = var.get("shortname")
+        full  = var.get("name")
+        unit  = var.get("units_abbreviation")
+
+        if not isinstance(short, str) or not isinstance(full, str):
+            # Skip malformed entries rather than crashing
+            continue
+
+        short = short.strip()
+        full  = full.strip()
+        unit  = unit.strip()
+
+        if short: mapping[short] = f"{full} ({unit})"
+
+    return mapping
+    
 
 """
 Accepts an array of headers, timestamps, and of dictionaries containing sensor measurements. 
 Also accepts a np array of whether or not  the measurements at that timestamp are test values. 
 Returns a dataframe.
 """
-def build_dataframe(headers: list, time: np.ndarray, measurements: np.ndarray,
+def build_dataframe(headers: list, time: np.ndarray, measurements: np.ndarray, fullname_map:dict,
                     time_window_start='', time_window_end='') -> pd.DataFrame:
     if not isinstance(headers, list):
         raise TypeError(f"'headers' must be list, got {type(headers)}")
@@ -396,6 +421,16 @@ def build_dataframe(headers: list, time: np.ndarray, measurements: np.ndarray,
             (df["time"].dt.time >= time_window_start) &
             (df["time"].dt.time <= time_window_end)
         ].reset_index(drop=True)
+
+    rename_map = {"time": "Time"}
+    for col in df.columns:
+        if col in fullname_map:
+            rename_map[col] = fullname_map[col]
+        elif col.endswith("_compass_dir"):
+            base = col.removesuffix("_compass_dir")
+            rename_map[col] = f"{fullname_map.get(base, base)} (Compass)"
+    
+    df = df.rename(columns=rename_map)
 
     return df
     
@@ -543,6 +578,8 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
     queue = deque([(timestamp_start, timestamp_end)])
     time, measurements = [], []
     total_num_measurements = 0
+    total_num_timestamps   = 0
+    fullname_map           = {}
 
     while queue:
         start_seg, end_seg = queue.popleft()
@@ -558,13 +595,18 @@ def reduce_datapoints(error_message:str, iD:int, timestamp_start:datetime, times
             queue.append((mid, end_seg))
             continue
 
-        data = all_fields['features'][0]['properties']['data']
+        if not fullname_map:
+            variables = all_fields['features'][0]['properties'].get('variables', [])
+            fullname_map = get_sensor_fullname_map(variables)
+
+        data                    = all_fields['features'][0]['properties']['data']
+        total_num_measurements += all_fields['features'][0]['properties']['measurements_in_feature']
+        total_num_timestamps   += all_fields['features'][0]['properties']['timestamps_in_feature']
         for dictionary in data:
             time.append(str(dictionary['time']))
-            total_num_measurements += len(dictionary['measurements'].keys())
             add_wind = write_compass_direction(dict(dictionary['measurements']) , fill_empty)
             measurements.append(add_wind)
     
     print("\tFinished reduction calculation.")
-    return [time, measurements, total_num_measurements]
+    return [time, measurements, total_num_measurements, total_num_timestamps, fullname_map]
      
