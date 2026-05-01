@@ -1,7 +1,6 @@
 # CHORDS Data Downloader
 Automated REST API client for downloading CHORDS meteorological data. Supports CSV export, dataframe export, column filtering, time windows, and all major CHORDS portals.<br><br>
-Authored by Rebecca Zieber.<br><br>
-NOTE: Columns are named by their shortname. To see the full sensor name, reference the associated CHORDS website.
+Authored by Rebecca Zieber.
 
 ## Prerequisites
 - Python **3.7+** 
