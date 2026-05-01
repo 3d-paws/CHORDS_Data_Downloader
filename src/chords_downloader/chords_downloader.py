@@ -58,10 +58,10 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
 
         print(f"---> Reading instrument ID {iD}\t\t\t\t\t\t\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-        time            = [] # list of strings  (e.g. '2023-12-17T00:00:04Z')
-        measurements    = [] # list of dictionaries  (e.g. {'t1': 25.3, 'rh1': 92.7, 'sp1': 1007.43, 't2': 26.9, 'msl1': 1013.01, 't3': 26.1})
-        total_num_measurements  = 0
-        total_num_timestamps    = 0
+        time: list[str]             = [] 
+        measurements: list[dict]    = [] 
+        total_num_measurements      = 0
+        total_num_timestamps        = 0
 
         url = f"{portal_url}/api/v1/data/{iD}?start={start}&end={end}&email={user_email}&api_key={api_key}"
         response = requests.get(url=url)
@@ -69,34 +69,37 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
         if resources.has_errors(response, portal_name, iD):
             continue # doesn't handle excess datapoint error
 
-        all_fields = loads(dumps(response.json())) # dictionary containing deep copy of JSON-formatted CHORDS data
+        all_fields: dict = loads(dumps(response.json())) 
 
-        if resources.has_excess_datapoints(all_fields): # reduce timeframe in API call
+        if resources.has_excess_datapoints(all_fields): 
             print("\tLarge data request -- reducing.")
-            reduced_data = resources.reduce_datapoints(all_fields['errors'][0], int(iD), timestamp_start, timestamp_end, \
-                                                        portal_url, user_email, api_key, fill_empty)    # list
-                                                        # e.g. [time, measurements, total_num_measurements]
+            reduced_data: list = resources.reduce_datapoints(all_fields['errors'][0], int(iD), timestamp_start, timestamp_end, \
+                                                                portal_url, user_email, api_key, fill_empty)  
             time                    = reduced_data[0]
             measurements            = reduced_data[1]
             total_num_measurements  = reduced_data[2]
+            total_num_timestamps    = reduced_data[3]
+            fullname_map            = reduced_data[4]
         else:
-            data = all_fields['features'][0]['properties']['data']  # list of dictionaries 
-                                                                    # ( e.g. {'time': '2023-12-17T18:45:56Z', 'measurements': {'ws': 1.55, 'rain': 1}} )
+            data: list[dict] = all_fields['features'][0]['properties']['data'] 
+                                                                   
             for i in range(len(data)):
-                total_num_measurements += len(data[i]['measurements'].keys())
-                total_num_timestamps   += 1
+                total_num_measurements = all_fields['features'][0]['properties']['measurements_in_feature']
+                total_num_timestamps   = all_fields['features'][0]['properties']['timestamps_in_feature']
                 
                 to_append = resources.write_compass_direction(dict(data[i]['measurements']), fill_empty)
                 measurements.append(to_append)
                 time.append(str(data[i]['time']))
 
-        headers = resources.build_headers(measurements, columns_desired, portal_name) # list of strings 
+            fullname_map = resources.get_sensor_fullname_map(all_fields['features'][0]['properties']['variables'])
+        
+        headers: list[str] = resources.build_headers(measurements, columns_desired, portal_name)
         measurements_array  = np.array(measurements)
         time_array          = np.array(time)
-        
+
         if resources.struct_has_data(measurements_array, time_array): 
             df = resources.build_dataframe(
-                headers, time_array, measurements_array, 
+                headers, time_array, measurements_array, fullname_map,
                 timestamp_window_start, timestamp_window_end
             )
             
@@ -113,10 +116,12 @@ def main(portal_url:str, portal_name:str, data_path:Path, instrument_IDs:list, u
             results[iD] = {
                 "dataframe":        df if output in ["df","both"] else None,
                 "csv_path":         file_path if output in ["csv","both"] else None,
-                "num_measurements": total_num_measurements
+                "num_measurements": total_num_measurements,
+                "num_timestamps":   total_num_timestamps
             }
 
             print(f"\tTotal number of measurements: {total_num_measurements}")
+            print(f"\tTotal number of timestamps:   {total_num_timestamps}")
         else:
             warnings.warn(
                 f"No data found at specified timeframe for {portal_name} Instrument ID: {iD}"
