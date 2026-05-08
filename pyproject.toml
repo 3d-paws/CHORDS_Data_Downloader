@@ -69,6 +69,10 @@ namespaces = false
 [tool.setuptools.package-dir]
 "" = "src"
 
+# For compatibility in cloud-based coding environment like Colab
+[tool.setuptools.package-data] 
+chords_downloader = ["resources/dev/portals.txt"]
+
 [tool.black]
 line-length = 88
 target-version = ['py38']
