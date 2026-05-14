@@ -53,6 +53,8 @@ def main():
                            time_window_end=time_window_end)
 
 
+cli = main
+
 if __name__ == '__main__':
     main()
     
