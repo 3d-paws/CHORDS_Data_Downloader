@@ -261,6 +261,17 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
+    tc_sort = [ # Turks and Caicos
+        'st1', 'bt1', 'mt1', 'sh1', 'bp1', 'mslp', 
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wg_compass_dir',
+        'rg', 'rgs', 'rgt', 'rgp',
+        'hi', 'wbt', 'wbgt',
+        'sv1', 'si1', 'su1',
+        'hth', 'bpc', 'bcs', 'css', 'cfr'
+    ]
+    md_sort = [ # Madagascar [TO DO!!!]
+
+    ]
 
     portal_name_lower = portal_name.lower()
 
@@ -298,6 +309,10 @@ def sort_columns(columns:list, portal_name:str) -> list:
         column_map = {col: i for i, col in enumerate(e_sort)}
     elif portal_name_lower == "Somalia".lower():
         column_map = {col: i for i, col in enumerate(sm_sort)}
+    elif portal_name_lower == "Turks-and-Caicos".lower():
+        column_map = {col: i for i, col in enumerate(tc_sort)}
+    elif portal_name_lower == "Madagascar".lower():
+        column_map = {col: i for i, col in enumerate(md_sort)}
     else:
         print("Portal provided does not have a specified sort order.")
 

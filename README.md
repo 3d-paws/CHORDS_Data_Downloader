@@ -61,6 +61,8 @@ Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
 - `Jamaica`            | `http://3d-jamaica.icdp.ucar.edu`
 - `Ethiopia`           | `https://3d-ethiopia.icdp.ucar.edu`
 - `Somalia`            | `http://3d-somalia.icdp.ucar.edu`
+- `Turks-and-Caicos`   | `https://3d-tc.icdp.ucar.edu`
+- `Madagascar`         | `https://3d-madagascar.icdp.ucar.edu`
 
 ## Platform Setup
 ### Raspberry Pi 3B/4/5

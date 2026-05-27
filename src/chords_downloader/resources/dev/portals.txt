@@ -15,3 +15,5 @@ bahamas
 somalia
 jamaica
 ethiopia
+turks-and-caicos
+madagascar
