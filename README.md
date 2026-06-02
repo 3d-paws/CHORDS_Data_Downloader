@@ -55,12 +55,12 @@ Create `env` from `env_[EXAMPLE]` and fill the required fields:
 - `Zimbabwe`           | `https://3d-zimbabwe.icdp.ucar.edu`
 - `Argentina`          | `https://3d-argentina.icdp.ucar.edu` 
 - `IITM`               | `https://3d-iitm.icdp.ucar.edu`
-- `Fiji`               | `http://3d-fiji.icdp.ucar.edu`
-- `Bahamas`            | `http://3d-bahamas.icdp.ucar.edu`
-- `Malawi`             | `http://3d-malawi.icdp.ucar.edu`
-- `Jamaica`            | `http://3d-jamaica.icdp.ucar.edu`
+- `Fiji`               | `https://3d-fiji.icdp.ucar.edu`
+- `Bahamas`            | `https://3d-bahamas.icdp.ucar.edu`
+- `Malawi`             | `https://3d-malawi.icdp.ucar.edu`
+- `Jamaica`            | `https://3d-jamaica.icdp.ucar.edu`
 - `Ethiopia`           | `https://3d-ethiopia.icdp.ucar.edu`
-- `Somalia`            | `http://3d-somalia.icdp.ucar.edu`
+- `Somalia`            | `https://3d-somalia.icdp.ucar.edu`
 - `Turks-and-Caicos`   | `https://3d-tc.icdp.ucar.edu`
 - `Madagascar`         | `https://3d-madagascar.icdp.ucar.edu`
 
