@@ -7,7 +7,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 from chords_downloader import chords_downloader
 
-load_dotenv()
+# Search for 'env' (non-hidden) walking up from cwd
+_cwd = Path.cwd()
+for _parent in [_cwd, *_cwd.parents]:
+    _candidate = _parent / "env"
+    if _candidate.is_file():
+        load_dotenv(dotenv_path=_candidate)
+        break
+else:
+    load_dotenv()  # fallback: standard .env search
 
 # Required user parameters -----------------------------------------------
 portal_url         = os.getenv("PORTAL_URL")
@@ -15,7 +23,7 @@ portal_name        = os.getenv("PORTAL_NAME")
 
 data_path_raw      = os.getenv("DATA_PATH")
 if data_path_raw is None:
-    raise ValueError("DATA_PATH missing from .env")
+    raise ValueError("DATA_PATH missing from env")
 data_path = Path(data_path_raw) 
 
 instrument_ids_str = os.getenv("INSTRUMENT_IDS", "[]")
@@ -45,7 +53,7 @@ time_window_end    = os.getenv("TIME_WINDOW_END", "")
 required = [portal_url, portal_name, data_path, instrument_ids, user_email, api_key, start, end]
 if not all(required):
     missing = [r for r in required if not r]
-    raise ValueError(f"Missing required environment variables: {missing}.\nCheck your .env file.")
+    raise ValueError(f"Missing required environment variables: {missing}.\nCheck your env file.")
 
 def main():
     chords_downloader.main(portal_url, portal_name, data_path, instrument_ids, user_email, api_key, start, end, 

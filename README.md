@@ -21,11 +21,11 @@ Authored by Rebecca Zieber.
    ```bash
    pip install -r requirements.txt
    ```
-4. **Copy and configure .env**<br>
+4. **Copy and configure env**<br>
    ```bash
-   cp ./src/chords_downloader/resources/dev/.env_[EXAMPLE] .src/chords_downloader/.env
+   cp ./src/chords_downloader/resources/dev/env_[EXAMPLE] ./env
    ```
-   See `/src/chords_downloader/resources/dev` for the template: `.env_[EXAMPLE]`.
+   See `/src/chords_downloader/resources/dev` for the template: `env_[EXAMPLE]`.
 5. **Download data**<br>
    ```bash
    chords-download
@@ -33,7 +33,7 @@ Authored by Rebecca Zieber.
    CSV's save to your `DATA_PATH` automatically.
 
 ## Configuration
-Create `.env` from `.env_[EXAMPLE]` and fill the required fields:
+Create `env` from `env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
    - `DATA_PATH` - the path where CSV's are to be exported to your local machine
