@@ -5,7 +5,7 @@ __pycache__/
 .venv/
 src/chords_downloader.egg-info
 .pytest_cache
-.env
+env
 .DS_Store
 .claude
 env
