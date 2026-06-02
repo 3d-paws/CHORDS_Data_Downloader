@@ -8,3 +8,4 @@ src/chords_downloader.egg-info
 .env
 .DS_Store
 .claude
+env
