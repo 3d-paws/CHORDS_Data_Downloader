@@ -32,7 +32,7 @@ Authored by Rebecca Zieber.
    ```
    CSV's save to your `DATA_PATH` automatically.
 
-[![CHORDS Data Downloader Guide](src/chords_downloader/resources/docs/User-Guide.png)](src/chords_downloader/resources/docs/API-Downloader-Intro+How-To-Use.pptx)
+[![CHORDS Data Downloader Guide](src/chords_downloader/resources/docs/User-Guide.png)](https://docs.google.com/presentation/d/1QUHa7zO0RMfa6-pFnzFD83u3EulmNKe4pK38sktvxX8/edit?usp=sharing)
 
 ## Configuration
 Create `env` from `env_[EXAMPLE]` and fill the required fields:
