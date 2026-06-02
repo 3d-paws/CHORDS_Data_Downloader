@@ -32,6 +32,8 @@ Authored by Rebecca Zieber.
    ```
    CSV's save to your `DATA_PATH` automatically.
 
+[![CHORDS Data Downloader Guide](src/chords_downloader/resources/docs/User-Guide.png)](src/chords_downloader/resources/docs/API-Downloader-Intro+How-To-Use.pptx)
+
 ## Configuration
 Create `env` from `env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
@@ -110,7 +112,7 @@ pip install -r requirements.txt
 ```
 
 ## Dependencies
-For compatibility with Python 3.7
+For compatibility with Python 3.7 (Only important if using the RPi 3B platform.)
 ```
 numpy>=1.21.0,<1.25.0
 pandas==1.3.5
