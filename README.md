@@ -32,7 +32,15 @@ Authored by Rebecca Zieber.
    ```
    CSV's save to your `DATA_PATH` automatically.
 
+## Tutorials
+
+### Quickstart Powerpoint
+The following link opens a powerpoint which explains how to use this script.
 [![CHORDS Data Downloader Guide](src/chords_downloader/resources/docs/User-Guide.png)](https://docs.google.com/presentation/d/1QUHa7zO0RMfa6-pFnzFD83u3EulmNKe4pK38sktvxX8/edit?usp=sharing)
+
+### Env Walkthrough
+The following link opens a video for download. The tutorial walks you through env setup and data download.
+[![Env Tutorial](src/chords_downloader/resources/docs/tutorial-thumbnail.png)](https://drive.google.com/file/d/1PJ9jAbVT6mksEoCJOjCnpMZaL5fbmIh_/view?usp=drive_link)
 
 ## Configuration
 Create `env` from `env_[EXAMPLE]` and fill the required fields:
