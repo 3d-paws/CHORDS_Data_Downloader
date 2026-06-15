@@ -15,11 +15,12 @@ Authored by Rebecca Zieber.
    ```bash
    pip install python3-venv
    python3 -m venv .venv
-   source .venv/bin.activate
+   source .venv/bin/activate
    ```
-3. **Install dependencies**<br>
+3. **Install dependencies and register command**<br>
    ```bash
    pip install -r requirements.txt
+   pip install -e .
    ```
 4. **Copy and configure env**<br>
    ```bash
@@ -108,9 +109,10 @@ Then set up the virtual environment.
 python3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
-Install the library dependencies.
+Install the library dependencies and register command.
 ```bash
 pip install -r requirements.txt
+pip install -e .
 ```
 ### macOS/Linux
 ```bash
