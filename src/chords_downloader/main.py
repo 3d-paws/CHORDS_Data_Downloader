@@ -1,11 +1,35 @@
 """
-CHORDS Data Downloader 
+CHORDS Data Downloader
 Authored by Rebecca Zieber
 """
+import ast
 import os
+import re
 from pathlib import Path
 from dotenv import load_dotenv
 from chords_downloader import chords_downloader
+
+
+def _parse_instrument_ids(s: str) -> list:
+    """Parse INSTRUMENT_IDS from env. Accepts a list literal or range() expression.
+
+    Examples:
+        "[1,2,3,4,5]"      -> [1, 2, 3, 4, 5]
+        "range(1, 6)"      -> [1, 2, 3, 4, 5]
+        "range(1, 20, 2)"  -> [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+    """
+    s = s.strip()
+    range_match = re.fullmatch(r'range\(\s*(\d+)\s*(?:,\s*(\d+)\s*(?:,\s*(\d+)\s*)?)?\)', s)
+    if range_match:
+        args = [int(x) for x in range_match.groups() if x is not None]
+        return list(range(*args))
+    try:
+        result = ast.literal_eval(s)
+        if isinstance(result, list):
+            return result
+    except (ValueError, SyntaxError):
+        pass
+    return []
 
 # Search for 'env' (non-hidden) walking up from cwd
 _cwd = Path.cwd()
@@ -26,12 +50,7 @@ if data_path_raw is None:
     raise ValueError("DATA_PATH missing from env")
 data_path = Path(data_path_raw) 
 
-instrument_ids_str = os.getenv("INSTRUMENT_IDS", "[]")
-try:
-    instrument_ids = eval(instrument_ids_str)
-    assert isinstance(instrument_ids, list)
-except:
-    instrument_ids = []
+instrument_ids = _parse_instrument_ids(os.getenv("INSTRUMENT_IDS", "[]"))
 
 user_email         = os.getenv("USER_EMAIL")
 api_key            = os.getenv("API_KEY") 

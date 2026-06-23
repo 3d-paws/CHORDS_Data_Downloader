@@ -48,7 +48,10 @@ Create `env` from `env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
    - `DATA_PATH` - the path where CSV's are to be exported to your local machine
-   - `INSTRUMENT_IDS` - the list of instrument id's (refer to the available instruments on your CHORDS portal) -> comma separated integers
+   - `INSTRUMENT_IDS` - the instruments to download data for (refer to the available instruments on your CHORDS portal). Accepts a list of integers or a `range()` expression:
+     - List: `INSTRUMENT_IDS="[1,2,5,10]"`
+     - Range: `INSTRUMENT_IDS="range(1,12)"` → instruments 1–11
+     - Range with step: `INSTRUMENT_IDS="range(1,20,2)"` → every other instrument (1,3,5,...,19)
    - `USER_EMAIL` - the email associated with your CHORDS account
    - `API_KEY` - the API associated with your CHORDS account
    - `START` - the start of your desired data period
