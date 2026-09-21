@@ -12,9 +12,25 @@ Authored by Rebecca Zieber.
    git clone https://github.com/rzieber/CHORDS_Data_Downloader.git
    ```
 2. **Set up virtual environment**<br>
+   `venv` ships with Python on macOS/Windows — no separate install needed there. On Debian/Ubuntu Linux, install it via apt first (it's a system package, not a pip package):
    ```bash
-   pip install python3-venv
+   sudo apt install python3-venv
+   ```
+   Create the virtual environment:
+   ```bash
    python3 -m venv .venv
+   ```
+   Activate it — **Windows (PowerShell, not Command Prompt)**:
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   ```
+   If you get an error that "running scripts is disabled on this system," open **Windows PowerShell as administrator** (search "PowerShell" in the Start menu, right-click → Run as administrator — this must be PowerShell, not `cmd.exe`, which doesn't have this command) and run once:
+   ```powershell
+   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```
+   Then retry the activation command above in a regular (non-admin) PowerShell window.
+   Activate it — **macOS/Linux**:
+   ```bash
    source .venv/bin/activate
    ```
 3. **Install dependencies and register command**<br>
@@ -57,6 +73,7 @@ Create `env` from `env_[EXAMPLE]` and fill the required fields:
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
    - `OUTPUT` - the type of output you desire, valid selections are: csv, df, or both -> string values
+   - `FILL_GAPS` *(optional)* - fill missing timestamps with NaN rows; set to `true` to enable, `false` to disable (default: `false`). The sampling rate is inferred automatically from the data.
 
 ## Available Portals
 - `3D-PAWS`            | `https://3d.chordsrt.com`
