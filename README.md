@@ -75,6 +75,8 @@ The following link opens a powerpoint which explains how to use this script.
 The following link opens a video for download. The tutorial walks you through .env setup and data download.
 [![.env Tutorial](src/chords_downloader/resources/docs/tutorial-thumbnail.png)](https://drive.google.com/file/d/1PJ9jAbVT6mksEoCJOjCnpMZaL5fbmIh_/view?usp=drive_link)
 
+> **Note:** in the video, the file is named `env` rather than `.env`. That's only because the file browser used to record it can't display files that start with a dot. When you set this up yourself, name the file `.env` — that's what the downloader actually looks for.
+
 ## Configuration
 Create `.env` from `env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
