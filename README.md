@@ -3,31 +3,63 @@ Automated REST API client for downloading CHORDS meteorological data. Supports C
 Authored by Rebecca Zieber.
 
 ## Prerequisites
-- Python **3.7+** 
+- Python **3.9+**
 - CHORDS account with **API key** and download privileges
 
-## Quick Start
+## Quick Start (Windows, macOS/Linux)
 1. **Clone/download** this repo<br>
    ```bash
    git clone https://github.com/rzieber/CHORDS_Data_Downloader.git
    ```
 2. **Set up virtual environment**<br>
+   **On Debian/Ubuntu Linux only**, install it via apt first (it's a system package, not a pip package):
    ```bash
-   pip install python3-venv
+   sudo apt install python3-venv
+   ```
+   Create the virtual environment — **Windows (PowerShell)**:
+   ```powershell
+   py -m venv .venv
+   ```
+   > If no Python is installed, `winget install Python.Python.3.10` will get you one.
+
+   Create the virtual environment — **macOS/Linux**:
+   ```bash
    python3 -m venv .venv
+   ```
+   Activate it — **Windows (PowerShell, not Command Prompt)**:
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   ```
+   > If you get an error that "running scripts is disabled on this system," open **Windows PowerShell as administrator** (search "PowerShell" in the Start menu, right-click → Run as administrator — this must be PowerShell, not `cmd.exe`, which doesn't have this command) and run once:
+   > ```powershell
+   > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+   > ```
+   > Then retry the activation command above in a regular (non-admin) PowerShell window.
+
+   Activate it — **macOS/Linux**:
+   ```bash
    source .venv/bin/activate
    ```
+   **Check:** if everything above worked, your prompt now starts with `(.venv)` — for example `(.venv) PS C:\Users\username\Documents\CHORDS_Data_Downloader>`. If you don't see that, the virtual environment isn't active, and you should go back and re-run the activation step before continuing.
 3. **Install dependencies and register command**<br>
+   **On Windows**, upgrade pip first — an outdated pip can fail to install some dependencies:
+   ```powershell
+   python -m pip install --upgrade pip
+   ```
+   All operating systems:
    ```bash
    pip install -r requirements.txt
    pip install -e .
    ```
-4. **Copy and configure env**<br>
+4. **Copy and configure .env**<br>
    ```bash
-   cp ./src/chords_downloader/resources/dev/env_[EXAMPLE] ./env
+   cp ./src/chords_downloader/resources/dev/env_[EXAMPLE] ./.env
    ```
-   See `/src/chords_downloader/resources/dev` for the template: `env_[EXAMPLE]`.
-5. **Download data**<br>
+   > See `/src/chords_downloader/resources/dev` for the template: `env_[EXAMPLE]`.
+5. **Update the `.env` file**<br>
+   Open the `.env` file you just created in a plain text editor — Notepad on Windows, TextEdit on macOS, or any code editor — and fill in your own values (portal URL, instrument IDs, account email, API key, date range, etc.).
+   > See [Configuration](#configuration) below for what each parameter means and how to format it.
+6. **Download data**<br>
    ```bash
    chords-download
    ```
@@ -39,15 +71,15 @@ Authored by Rebecca Zieber.
 The following link opens a powerpoint which explains how to use this script.
 [![CHORDS Data Downloader Guide](src/chords_downloader/resources/docs/User-Guide.png)](https://docs.google.com/presentation/d/1QUHa7zO0RMfa6-pFnzFD83u3EulmNKe4pK38sktvxX8/edit?usp=sharing)
 
-### Env Walkthrough
-The following link opens a video for download. The tutorial walks you through env setup and data download.
-[![Env Tutorial](src/chords_downloader/resources/docs/tutorial-thumbnail.png)](https://drive.google.com/file/d/1PJ9jAbVT6mksEoCJOjCnpMZaL5fbmIh_/view?usp=drive_link)
+### .env Walkthrough
+The following link opens a video for download. The tutorial walks you through .env setup and data download.
+[![.env Tutorial](src/chords_downloader/resources/docs/tutorial-thumbnail.png)](https://drive.google.com/file/d/1PJ9jAbVT6mksEoCJOjCnpMZaL5fbmIh_/view?usp=drive_link)
 
 ## Configuration
-Create `env` from `env_[EXAMPLE]` and fill the required fields:
+Create `.env` from `env_[EXAMPLE]` and fill the required fields:
    - `PORTAL_URL` - the URL associated with your CHORDS portal (see Available Portals below)
    - `PORTAL_NAME` - the name associated with your CHORDS portal (see Available Portals below)
-   - `DATA_PATH` - the path where CSV's are to be exported to your local machine
+   - `DATA_PATH` - the path where CSV's are to be exported to your local machine. **On Windows, use forward slashes**, e.g. `DATA_PATH=C:/Users/username/Documents/CHORDS` — backslashes in the path can cause issues
    - `INSTRUMENT_IDS` - the instruments to download data for (refer to the available instruments on your CHORDS portal). Accepts a list of integers or a `range()` expression:
      - List: `INSTRUMENT_IDS="[1,2,5,10]"`
      - Range: `INSTRUMENT_IDS="range(1,12)"` → instruments 1–11
@@ -57,6 +89,7 @@ Create `env` from `env_[EXAMPLE]` and fill the required fields:
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
    - `OUTPUT` - the type of output you desire, valid selections are: csv, df, or both -> string values
+   - `FILL_GAPS` *(optional)* - fill missing timestamps with NaN rows; set to `true` to enable, `false` to disable (default: `false`). The sampling rate is inferred automatically from the data.
 
 ## Available Portals
 - `3D-PAWS`            | `https://3d.chordsrt.com`
@@ -78,65 +111,10 @@ Create `env` from `env_[EXAMPLE]` and fill the required fields:
 - `Turks-and-Caicos`   | `https://3d-tc.icdp.ucar.edu`
 - `Madagascar`         | `https://3d-madagascar.icdp.ucar.edu`
 
-## Platform Setup
-### Raspberry Pi 3B/4/5
-Perform the following from the project root.<br>
-Update the system. Install pip and Python virtual environment.
-```bash
-sudo apt update
-sudo apt install python3-pip python3-venv
-```
-Enable pinwheels for faster dependency installation.
-```bash
-echo "[global]" | sudo tee /etc/pip.conf
-echo "extra-index-url=https://www.piwheels.org/simple" | sudo tee -a /etc/pip.conf
-```
-Create the virtual environment and activate it.
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-Finally, install library dependencies and configure script for execution via the command line.
-```bash
-pip install -r requirements.txt --prefer-binary
-pip install --update pip setuptools wheel
-pip install -e .
-```
-### Windows
-One-time (run as admin).
-```bash
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-Then set up the virtual environment.
-```bash
-python3 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-Install the library dependencies and register command.
-```bash
-pip install -r requirements.txt
-pip install -e .
-```
-### macOS/Linux
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-## Dependencies
-For compatibility with Python 3.7 (Only important if using the RPi 3B platform.)
-```
-numpy>=1.21.0,<1.25.0
-pandas==1.3.5
-pytest==7.4.3
-python-dotenv==0.21.1
-requests==2.31.0
-```
-
 ## Troubleshooting
-See Windows-specific setup tips here:<br>
-https://drive.google.com/file/d/1TsTg8LvilrUqBZpj7nq3RsUV5CsSwjB_/view?usp=drive_link
+- **"Large data request -- reducing."** during download — this is expected for large date ranges or instrument counts. The downloader automatically splits the request into smaller time segments and retries; a successful run still ends with `Finished writing CSV.` and summary counts.
+- **PowerShell won't run the activation script** (`running scripts is disabled on this system`) — open PowerShell as administrator and run `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` once, then retry activation in a regular (non-admin) window. This must be PowerShell, not `cmd.exe`.
+- **`python3` not recognized (Windows)** — Windows typically doesn't have a `python3` command; use `py` instead (e.g. `py -m venv .venv`, or `py -3.10 -m venv .venv` to target a specific version).
 
 ## For Contributors
 Run the following to test changes before submitting a pull request:

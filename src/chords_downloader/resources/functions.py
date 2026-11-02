@@ -269,8 +269,14 @@ def sort_columns(columns:list, portal_name:str) -> list:
         'sv1', 'si1', 'su1',
         'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
-    md_sort = [ # Madagascar [TO DO!!!]
-
+    md_sort = [ # Madagascar
+        'rg', 'rg1', 'rg2', 'rgt', 'rgt1', 'rgt2', 'rgp', 'rgp1', 'rgp2',
+        'hi',  'wbt', 'wbgt',
+        'bt1', 'st1', 'mt1',
+        'bh1', 'sh1',
+        'bp1', 'bp2', 'mslp',
+        'ws', 'wd', 'wd_compass_dir', 'wg', 'wgd', 'wgd_compass_dir',
+        'hth', 'bpc', 'bcs', 'css', 'cfr'
     ]
 
     portal_name_lower = portal_name.lower()
