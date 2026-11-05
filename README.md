@@ -91,7 +91,12 @@ Create `.env` from `env_[EXAMPLE]` and fill the required fields:
    - `START` - the start of your desired data period
    - `END` -  the end of your desired data period
    - `OUTPUT` - the type of output you desire, valid selections are: csv, df, or both -> string values
-   - `FILL_GAPS` *(optional)* - fill missing timestamps with NaN rows; set to `true` to enable, `false` to disable (default: `false`). The sampling rate is inferred automatically from the data.
+   - `COLUMNS_DESIRED` *(optional)* - the variables to include in the output, given as a comma-separated list of shortnames (refer to the shortnames shown for your instrument on your CHORDS portal). Do not use brackets or quotes around individual names. The `time` column is always included. Leave empty to download all columns (default).
+     - All columns: `COLUMNS_DESIRED=""`
+     - Subset: `COLUMNS_DESIRED="t1,t2,rh1"` → `time`, `t1`, `t2`, and `rh1` only
+   - `TIME_WINDOW_START` / `TIME_WINDOW_END` *(optional)* - restrict the download to a window of time within each day of your `START`–`END` period. Both must be in `HH:MM:SS` format (24-hour clock), both must be set if either is used, and the start must be earlier than the end. The window is inclusive on both ends. Leave both empty to keep all timestamps (default).
+     - All timestamps: `TIME_WINDOW_START=""` and `TIME_WINDOW_END=""`
+     - Window: `TIME_WINDOW_START="06:00:00"` and `TIME_WINDOW_END="18:00:00"` → only observations from 06:00:00 through 18:00:00 on each day
 
 ## Available Portals
 - `3D-PAWS`            | `https://3d.chordsrt.com`
