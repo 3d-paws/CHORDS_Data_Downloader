@@ -59,7 +59,7 @@ end                = os.getenv("END")
 output             = os.getenv("OUTPUT", "csv")
 
 # Optional user parameters -----------------------------------------------
-columns_desired_str = os.getenv("COLUMNS_DESIRED", "[]")
+columns_desired_str = os.getenv("COLUMNS_DESIRED", "")
 if columns_desired_str:
     columns_desired = [col.strip() for col in columns_desired_str.split(',')]
 else:
